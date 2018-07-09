@@ -9,7 +9,7 @@ local Inventory = {}
       inventory.size = size
     end
 
-    function add(item)
+    function add(stack)
       
     end
 
