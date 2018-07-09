@@ -68,12 +68,12 @@ function testmove(entity, dx, dy)
   entity:move(dx, dy)
 end
 
-focus = {}
+handledEntity = {}
 
 function love.mousemoved(x, y, dx, dy)
   if love.mouse.isDown(1) then
-    if focus and focus.move then
-      testmove(focus, dx,dy)
+    if handledEntity and handledEntity.move then
+      testmove(handledEntity, dx,dy)
     else
       posCam.x = posCam.x - dx
       posCam.y = posCam.y - dy
@@ -84,8 +84,8 @@ end
 function love.mousepressed(x, y, button, isTouch)
   for e  = 1, #entities, 1 do
     if entities[e]:doesTouch(x - width/2 + posCam.x, y - height/2 + posCam.y) then
-      if focus == nil then
-        focus = entities[e]
+      if handledEntity == nil then
+        handledEntity = entities[e]
         return
       end
     end
@@ -93,8 +93,8 @@ function love.mousepressed(x, y, button, isTouch)
 end
 
 function love.mousereleased(x, y, button, isTouch)
-  if focus then
-    focus = nil
+  if handledEntity then
+    handledEntity = nil
   end
 end
 
