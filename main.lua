@@ -1,6 +1,8 @@
 local Entity = require "entity"
+local GUI = require "GUI"
 entities = {}
-
+local groupTest
+local panelTest1
 
 function love.load()
   width = love.graphics.getWidth()
@@ -11,6 +13,11 @@ function love.load()
 
   entities[2] = Entity:new()
   entities[2]:init({x = 300, y = 300})
+
+  groupTest = GUI.newGroup()
+  panelTest1 = GUI.newPanel(width-300,0,300,200)
+  groupTest:addElement(panelTest1)
+
 end
 
 
@@ -29,6 +36,8 @@ function love.draw()
   love.graphics.print("mouse: x:" .. love.mouse.getX() -width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
   love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
   love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
+
+  groupTest:draw()
 end
 
 function love.update(dt)
@@ -75,5 +84,15 @@ end
 function love.mousereleased(x, y, button, isTouch)
   if focus then
     focus = nil
+  end
+end
+
+function love.keypressed(key, scancode, isrepeat)
+  if key == "i" then
+    if panelTest1.visible == true then
+      panelTest1:setVisible(false)
+    else
+      panelTest1:setVisible(true)
+    end
   end
 end

@@ -26,6 +26,7 @@ local function newElement (x, y)
 
   element.x = x
   element.y = y
+  element.visible = true
 
   function element:draw()
     print("newElement / draw / TODO")
@@ -52,7 +53,7 @@ function GUI.newPanel(x,y,w,h)
   function panel:drawPanel()
     love.graphics.setColor(255, 255, 255)
     if self.image == nil then
-      love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+      love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
     else
       love.graphics.draw(self.image, self.x, self.y)
     end
