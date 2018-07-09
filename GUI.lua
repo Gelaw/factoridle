@@ -26,7 +26,7 @@ local function newElement (x, y)
 
   element.x = x
   element.y = y
-  element.visible = true
+  element.visible = false
 
   function element:draw()
     print("newElement / draw / TODO")
@@ -66,6 +66,35 @@ function GUI.newPanel(x,y,w,h)
   end
 
   return panel
+end
+
+function GUI.newText(x,y,w,h,pText, font, horizontalAlign, verticalAlign)
+  local text = GUI.newPanel(x, y, w, h)
+  text.Text = pText
+  text.font = font
+  text.TextW = font:getWidth(pText)
+  text.TextH = font:getHeight(pText)
+  text.horizontalAlign = horizontalAlign
+  text.verticalAlign = verticalAlign
+
+  function  text:drawText()
+    love.graphics.setColor(255, 0, 0)
+    love.graphics.setFont(self.font)
+    local x = self.x
+    local y = self.y
+    if self.horizontalAlign == "center" then
+      x = x + ((self.w - self.TextW) / 2)
+    end
+    if self.verticalAlign == "center" then
+      y = y + ((self.y - self.TextH + 20) / 2)
+    end
+    love.graphics.print(self.Text, x, y)
+  end
+  function text:draw()
+    if self.visible == false then return end
+    self:drawText()
+  end
+  return text
 end
 
 return GUI

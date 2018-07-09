@@ -3,6 +3,9 @@ local GUI = require "GUI"
 entities = {}
 local groupTest
 local panelTest1
+local panelTest2
+local textTest1
+local textTest2
 
 function love.load()
   width = love.graphics.getWidth()
@@ -17,7 +20,12 @@ function love.load()
   groupTest = GUI.newGroup()
   panelTest1 = GUI.newPanel(width-300,0,300,200)
   groupTest:addElement(panelTest1)
-
+  panelTest2 = GUI.newPanel(0,0,300,200)
+  groupTest:addElement(panelTest2)
+  textTest2 = GUI.newText(0,0,300,200,"Caracteristique",love.graphics.getFont(), "center", "center")
+  groupTest:addElement(textTest2)
+  textTest1 = GUI.newText(width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
+  groupTest:addElement(textTest1)
 end
 
 
@@ -91,8 +99,20 @@ function love.keypressed(key, scancode, isrepeat)
   if key == "i" then
     if panelTest1.visible == true then
       panelTest1:setVisible(false)
+      textTest1:setVisible(false)
+
     else
       panelTest1:setVisible(true)
+      textTest1:setVisible(true)
+    end
+  end
+  if key == "c" then
+    if panelTest2.visible == true then
+      panelTest2:setVisible(false)
+      textTest2:setVisible(false)
+    else
+      panelTest2:setVisible(true)
+      textTest2:setVisible(true)
     end
   end
 end
