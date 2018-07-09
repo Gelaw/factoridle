@@ -1,4 +1,4 @@
-local RessourceMaker = require "ressourceMaker"
+local Entity = require "entity"
 entities = {}
 inventory = {}
 
@@ -7,10 +7,10 @@ function love.load()
   height = love.graphics.getHeight()
   posCam = {x = 0, y = 0}
   posMouse = {x = width/2 - love.mouse.getX() , y = height/2 - love.mouse.getY()}
-  entities[1] = RessourceMaker:new()
+  entities[1] = Entity:new()
   entities[1]:init({x = 200, y = 200})
 
-  entities[2] = RessourceMaker:new()
+  entities[2] = Entity:new()
   entities[2]:init({x = 300, y = 300})
 end
 
