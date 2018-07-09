@@ -4,7 +4,8 @@ local Entity = {}
     local entity = {}
     entity.image = {}
     entity.pos = {x = 0, y = 0}
-    entity.dim = {width = 20, height = 20}
+    entity.dim = {width = 50, height = 50}
+    entity.movable = true
 
     function entity:init(pos,image,dim)
       entity.pos = pos
@@ -17,6 +18,9 @@ local Entity = {}
     end
 
     function entity:move(dx, dy)
+      if entity.movable == false then
+        return
+      end
       entity.pos.x = entity.pos.x + dx
       entity.pos.y = entity.pos.y + dy
     end
@@ -39,7 +43,7 @@ local Entity = {}
         entity.pos.y - posCam.y + height/2,
         0, 1, 1)]]
 
-        love.graphics.setColor(100 + love.math.random() * 155,100 + love.math.random() * 155,100+ love.math.random() * 155)
+        love.graphics.setColor(100 + love.math.random() * 25,100 + love.math.random() * 25,100+ love.math.random() * 25)
         love.graphics.rectangle("fill",
           entity.pos.x - posCam.x + width/2 - entity.dim.width/2,
           entity.pos.y - posCam.y + height/2 - entity.dim.height/2,

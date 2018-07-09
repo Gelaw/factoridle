@@ -1,12 +1,11 @@
 local Entity = require "entity"
 entities = {}
-inventory = {}
+
 
 function love.load()
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
   posCam = {x = 0, y = 0}
-  posMouse = {x = width/2 - love.mouse.getX() , y = height/2 - love.mouse.getY()}
   entities[1] = Entity:new()
   entities[1]:init({x = 200, y = 200})
 
@@ -16,10 +15,10 @@ end
 
 
 function love.draw()
-  love.graphics.setColor(25, 25, 25)
+  love.graphics.setColor(255, 255, 255)
   for x = - posCam.x%50 - 50 ,  width, 50 do
     for y = - posCam.y%50 - 50,  height, 50 do
-      love.graphics.rectangle("fill", x + 1, y + 1, 48, 48)
+      love.graphics.rectangle("line", x, y, 50, 50)
     end
   end
   for e  = 1, #entities, 1 do
@@ -36,13 +35,25 @@ function love.update(dt)
 
 end
 
+function testmove(entity, dx, dy)
+  for e  = 1, #entities, 1 do
+    if entity ~= entities[e]
+      and (entities[e]:doesTouch(entity.pos.x + dx - entity.dim.width / 2 + 1, entity.pos.y + dy - entity.dim.height / 2 + 1)
+        or entities[e]:doesTouch(entity.pos.x + dx + entity.dim.width / 2 - 1, entity.pos.y + dy + entity.dim.height / 2 - 1)
+        or entities[e]:doesTouch(entity.pos.x + dx + entity.dim.width / 2 - 1, entity.pos.y + dy - entity.dim.height / 2 + 1)
+        or entities[e]:doesTouch(entity.pos.x + dx - entity.dim.width / 2 + 1, entity.pos.y + dy + entity.dim.height / 2 - 1)) then
+        return
+    end
+  end
+  entity:move(dx, dy)
+end
+
 focus = {}
 
 function love.mousemoved(x, y, dx, dy)
   if love.mouse.isDown(1) then
     if focus and focus.move then
-      print(" ")
-      focus:move(dx,dy)
+      testmove(focus, dx,dy)
     else
       posCam.x = posCam.x - dx
       posCam.y = posCam.y - dy
