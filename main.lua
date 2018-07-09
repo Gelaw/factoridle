@@ -6,6 +6,7 @@ local panelTest1
 local panelTest2
 local textTest1
 local textTest2
+local button
 
 function love.load()
   width = love.graphics.getWidth()
@@ -26,6 +27,8 @@ function love.load()
   groupTest:addElement(textTest2)
   textTest1 = GUI.newText(width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
   groupTest:addElement(textTest1)
+  button = GUI.newButton(width -110,(height /2) -37 ,100,75,"Click",love.graphics.getFont())
+  groupTest:addElement(button)
 end
 
 
@@ -49,7 +52,7 @@ function love.draw()
 end
 
 function love.update(dt)
-
+  groupTest:update(dt)
 end
 
 function testmove(entity, dx, dy)

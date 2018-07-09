@@ -10,18 +10,22 @@ function GUI.newGroup()
 
   function group:draw()
     --save current graphics context
-    love.graphics.push()
+    --love.graphics.push()
     for n,v in pairs(group.elements) do
       v:draw()
     end
     --set previously saved graphics context
-    love.graphics.pop()
+    --love.graphics.pop()
   end
-
+  function group:update(dt)
+    for n,v in pairs(group.elements) do
+      v:update(dt)
+    end
+  end
   return group
 end
 
-local function newElement (x, y)
+local function newElement(x, y)
   local element = {}
 
   element.x = x
@@ -34,7 +38,9 @@ local function newElement (x, y)
   function element:setVisible(visible)
     self.visible = visible
   end
-
+  function element:update(dt)
+    --print("newElement / update / TODO")
+  end
   return element
 end
 
@@ -43,6 +49,8 @@ function GUI.newPanel(x,y,w,h)
   panel.w = w
   panel.h = h
   panel.image = nil
+  panel.isHover = false
+
 
   function panel:setImage(image)
     self.image = image
@@ -63,6 +71,24 @@ function GUI.newPanel(x,y,w,h)
     if panel.visible then
       self:drawPanel()
     end
+  end
+  function panel:update(dt)
+    self:updatePanel()
+  end
+  function panel:updatePanel(dt)
+    local mx, my = love.mouse.getPosition()
+    if mx > self.x and mx < self.x + self.w and
+      my > self.y and my < self.y + self.h then
+        if self.isHover == false then
+          self.isHover = true
+          print("hover")
+        end
+    else
+      if self.isHover == true then
+        self.isHover = false
+      end
+    end
+
   end
 
   return panel
@@ -95,6 +121,50 @@ function GUI.newText(x,y,w,h,pText, font, horizontalAlign, verticalAlign)
     self:drawText()
   end
   return text
+end
+
+function GUI.newButton(x,y,w,h,pText,font)
+  local button = GUI.newPanel(x, y, w, h)
+  button.Text = pText
+  button.font = font
+  button.label = GUI.newText(x, y - h, w, h, pText, font, "center", "center")
+  button.isPressed = false
+  button.oldButtonState = false
+
+  function button:draw()
+    if self.isPressed then
+      self:drawPanel()
+      love.graphics.setColor(50,50,255,100)
+      love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+    elseif self.isHover then
+      self:drawPanel()
+      love.graphics.setColor(255,0,255)
+      love.graphics.rectangle("line",self.x+2, self.y+2, self.w-4, self.h-4)
+    else
+          self:drawPanel()
+    end
+    love.graphics.setColor(255, 0, 0)
+    self.label.visible = true
+    self.label:draw()
+  end
+
+
+  function button:update(dt)
+    self:updatePanel()
+    if self.isHover and love.mouse.isDown(1) and
+        self.isPressed == false and
+        self.oldButtonState == false then
+          print("clicked")
+      self.isPressed = true
+    else
+      if self.isPressed == true and love.mouse.isDown(1) == false then
+        self.isPressed = false
+      end
+    end
+    self.oldButtonState = love.mouse.isDown(1)
+  end
+
+  return button
 end
 
 return GUI
