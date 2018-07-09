@@ -4,7 +4,7 @@ local RessourceMaker = {}
     local ressourceMaker = {}
     ressourceMaker.image = {}
     ressourceMaker.pos = {x = 0, y = 0}
-    ressourceMaker.dim = {width = 50, height = 50}
+    ressourceMaker.dim = {width = 20, height = 20}
 
     function ressourceMaker:init(pos,image,dim)
       ressourceMaker.pos = pos
@@ -22,7 +22,6 @@ local RessourceMaker = {}
     end
 
     function ressourceMaker:doesTouch(x, y)
-      print("x:", x, "y:", y, "   rm.x:", ressourceMaker.pos.x, "rm.y:", ressourceMaker.pos.y   )
       if x > ressourceMaker.pos.x - ressourceMaker.dim.width / 2
       and x < ressourceMaker.pos.x + ressourceMaker.dim.width / 2
       and y > ressourceMaker.pos.y - ressourceMaker.dim.height / 2
