@@ -15,7 +15,7 @@ local Inventory = {}
 
     function inventory:add(stack)
       for i = 1, inventory.size, 1 do
-        if inventory.items[i] ~= "empty" and inventory.items[i].type == stack.type then
+        if inventory.items[i] ~= "empty" and inventory.items[i].idtype == stack.idtype then
           inventory.items[i].quantity = inventory.items[i].quantity + stack.quantity
           return
         elseif inventory.items[i] == "empty" then
@@ -29,7 +29,7 @@ local Inventory = {}
       local stack = Item:new()
       stack:init(itemType, 0)
       for i = 1, #inventory.items, 1 do
-        if inventory.items[i].type == stack.type then
+        if inventory.items[i].idtype == stack.idtype then
           if inventory.items[i].quantity >= quantity then
             if inventory.items[i].quantity == quantity then
               inventory.items[i] = "empty"
