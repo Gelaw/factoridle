@@ -81,7 +81,7 @@ function GUI.newPanel(x,y,w,h)
       my > self.y and my < self.y + self.h then
         if self.isHover == false then
           self.isHover = true
-          print("hover")
+        --  print("hover")
         end
     else
       if self.isHover == true then

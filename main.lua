@@ -1,4 +1,6 @@
 local Entity = require "entity"
+local Inventory = require "inventory"
+local Item = require "item"
 local GUI = require "GUI"
 entities = {}
 local groupTest
@@ -18,6 +20,9 @@ function love.load()
   entities[2] = Entity:new()
   entities[2]:init({x = 300, y = 300})
 
+  inventory = Inventory:new()
+  inventory:init(20)
+
   groupTest = GUI.newGroup()
   panelTest1 = GUI.newPanel(width-300,0,300,200)
   groupTest:addElement(panelTest1)
@@ -33,26 +38,35 @@ end
 
 
 function love.draw()
-  love.graphics.setColor(255, 255, 255)
+  love.graphics.setColor(25, 25, 25)
   for x = - posCam.x%50 - 50 ,  width, 50 do
     for y = - posCam.y%50 - 50,  height, 50 do
-      love.graphics.rectangle("line", x, y, 50, 50)
+      love.graphics.rectangle("fill", x +1 , y +1 , 48, 48)
     end
   end
   for e  = 1, #entities, 1 do
     entities[e]:draw(posCam)
   end
   love.graphics.setColor(255,255,255)
+
   love.graphics.print("cam: x:" ..posCam.x.." y:"..posCam.y, 30, 30)
   love.graphics.print("mouse: x:" .. love.mouse.getX() -width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
   love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
   love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
 
+  love.graphics.print(inventory:prompt(), 30, height / 2)
   groupTest:draw()
 end
-
+timer = 0
 function love.update(dt)
   groupTest:update(dt)
+  timer = timer + dt
+  if timer > 1 then
+    timer = 0
+    item = Item:new()
+    item:init(math.floor((#Item.stereotypes - 1) * love.math.random() + 2), 1)
+    inventory:add(item)
+  end
 end
 
 function testmove(entity, dx, dy)
@@ -117,5 +131,8 @@ function love.keypressed(key, scancode, isrepeat)
       panelTest2:setVisible(true)
       textTest2:setVisible(true)
     end
+  end
+  if key ==  "r" then
+    inventory:removeSlot(1)
   end
 end

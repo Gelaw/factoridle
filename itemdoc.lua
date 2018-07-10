@@ -1,5 +1,0 @@
-
-
-function getItemImage(itemType)
-  
-end
