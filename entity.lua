@@ -35,6 +35,9 @@ local Entity = {}
       return false
     end
 
+    entity.r = love.math.random() * 255
+    entity.g = love.math.random() * 255
+    entity.b = love.math.random() * 255
     function entity:draw(posCam)
       --[[
       love.graphics.draw(
@@ -43,7 +46,7 @@ local Entity = {}
         entity.pos.y - posCam.y + height/2,
         0, 1, 1)]]
 
-        love.graphics.setColor(100 + love.math.random() * 25,100 + love.math.random() * 25,100+ love.math.random() * 25)
+        love.graphics.setColor(entity.r,entity.g,entity.b)
         love.graphics.rectangle("fill",
           entity.pos.x - posCam.x + width/2 - entity.dim.width/2,
           entity.pos.y - posCam.y + height/2 - entity.dim.height/2,
