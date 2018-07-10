@@ -73,7 +73,7 @@ function GUI.newPanel(x,y,w,h)
     end
   end
   function panel:update(dt)
-    self:updatePanel()
+   self:updatePanel()
   end
   function panel:updatePanel(dt)
     local mx, my = love.mouse.getPosition()
@@ -119,6 +119,10 @@ function GUI.newText(x,y,w,h,pText, font, horizontalAlign, verticalAlign)
   function text:draw()
     if self.visible == false then return end
     self:drawText()
+  end
+  function text:update(dt)
+  end
+  function text:updateText(dt)
   end
   return text
 end
