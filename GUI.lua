@@ -178,46 +178,27 @@ function GUI.newButton(name,x,y,w,h,pText,font)
     if self.isHover and pButton == 1 and
         self.isPressed == false and
         self.oldButtonState == false then
-          print("clicked")
       self.isPressed = true
       if self.listEvents["pressed"] ~= nil then
-        self.listEvents["pressed"]("begin")
+        self.listEvents["pressed"](self.name)
       end
     end
     self.oldButtonState = true
   end
-  
+
   function button:onRelease(pButton)
     if self.isPressed == true and pButton == 1 then
       self.isPressed = false
-      if self.listEvents["pressed"] ~= nil then
-        self.listEvents["pressed"]("end")
-      end
+
+    end
+    if self.isHover == false then
+      self.isPressed = false
     end
     self.oldButtonState = false
 
   end
   function button:update(dt)
     self:updatePanel()
-    --TODO:deplacer dans le main.lua > isPressed
-    --[[if self.isHover and love.mouse.isDown(1) and
-        self.isPressed == false and
-        self.oldButtonState == false then
-          --print("clicked")
-      self.isPressed = true
-      if self.listEvents["pressed"] ~= nil then
-        self.listEvents["pressed"]("begin")
-      end
-    else
-      if self.isPressed == true and love.mouse.isDown(1) == false then
-        self.isPressed = false
-        if self.listEvents["pressed"] ~= nil then
-          self.listEvents["pressed"]("end")
-        end
-      end
-    end
-    self.oldButtonState = love.mouse.isDown(1)
-    ]]
   end
 
   return button

@@ -11,11 +11,11 @@ local textInventaire
 local button
 
 --function needed by Panel:setEvent
-function onPanelHover(state)
-  print("Mouse is hover: "..state)
+function onPanelHover(target)
+  print("Mouse is hover: "..target)
 end
-function onButtonClicked(state)
-  print(state.." click")
+function onButtonClicked(target)
+  print(target.." clicked")
 end
 --
 
@@ -185,9 +185,7 @@ function love.mousereleased(x, y, button, isTouch)
     handledEntity = nil
   end
   for n,v in pairs(groupTest.elements) do
-    if v.isHover then
       v:onRelease(button)
-    end
   end
 
 end
