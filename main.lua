@@ -10,6 +10,12 @@ local textTest1
 local textTest2
 local button
 
+--function needed by Panel:setEvent
+function onPanelHover(state)
+  print("Mouse is hover: "..state)
+end
+--
+
 function love.load()
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
@@ -23,17 +29,24 @@ function love.load()
   inventory = Inventory:new()
   inventory:init(20)
 
+
   groupTest = GUI.newGroup()
-  panelTest1 = GUI.newPanel(width-300,0,300,200)
-  groupTest:addElement(panelTest1)
-  panelTest2 = GUI.newPanel(0,0,300,200)
-  groupTest:addElement(panelTest2)
-  textTest2 = GUI.newText(0,0,300,200,"Caracteristique",love.graphics.getFont(), "center", "center")
-  groupTest:addElement(textTest2)
-  textTest1 = GUI.newText(width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
-  groupTest:addElement(textTest1)
-  button = GUI.newButton(width -110,(height /2) -37 ,100,75,"Click",love.graphics.getFont())
+  panelInventaire = GUI.newPanel("Inventaire",width-300,0,300,200)
+  groupTest:addElement(panelInventaire)
+  panelCaracteristique = GUI.newPanel("Caracteristique",0,0,300,200)
+  groupTest:addElement(panelCaracteristique)
+  textCaracteristique = GUI.newText("textCaracteristique",0,0,300,200,"Caracteristique",love.graphics.getFont(), "center", "center")
+  groupTest:addElement(textCaracteristique)
+  textInventaire = GUI.newText("textInventaire",width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
+  groupTest:addElement(textInventaire)
+  button = GUI.newButton("button",width -110,(height /2) -37 ,100,75,"Click",love.graphics.getFont())
   groupTest:addElement(button)
+
+  panelInventaire:setEvent("hover", onPanelHover)
+  panelCaracteristique:setEvent("hover", onPanelHover)
+  textCaracteristique:setEvent("hover", onPanelHover)
+  textInventaire:setEvent("hover", onPanelHover)
+  button:setEvent("hover", onPanelHover)
 end
 
 
@@ -47,7 +60,10 @@ function love.draw()
   for e  = 1, #entities, 1 do
     entities[e]:draw(posCam)
   end
-  love.graphics.setColor(255,255,255)
+  --draw test GUI
+  groupTest:draw()
+
+  love.graphics.setColor(255,0,255)
 
   love.graphics.print("cam: x:" ..posCam.x.." y:"..posCam.y, 30, 30)
   love.graphics.print("mouse: x:" .. love.mouse.getX() -width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
@@ -55,7 +71,6 @@ function love.draw()
   love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
 
   love.graphics.print(inventory:prompt(), 30, height / 2)
-  groupTest:draw()
 end
 timer = 0
 function love.update(dt)
@@ -114,25 +129,28 @@ end
 
 function love.keypressed(key, scancode, isrepeat)
   if key == "i" then
-    if panelTest1.visible == true then
-      panelTest1:setVisible(false)
-      textTest1:setVisible(false)
+    if panelInventaire.visible == true then
+      panelInventaire:setVisible(false)
+      textInventaire:setVisible(false)
 
     else
-      panelTest1:setVisible(true)
-      textTest1:setVisible(true)
+      panelInventaire:setVisible(true)
+      textInventaire:setVisible(true)
     end
   end
   if key == "c" then
-    if panelTest2.visible == true then
-      panelTest2:setVisible(false)
-      textTest2:setVisible(false)
+    if panelCaracteristique.visible == true then
+      panelCaracteristique:setVisible(false)
+      textCaracteristique:setVisible(false)
     else
-      panelTest2:setVisible(true)
-      textTest2:setVisible(true)
+      panelCaracteristique:setVisible(true)
+      textCaracteristique:setVisible(true)
     end
   end
   if key ==  "r" then
     inventory:removeSlot(1)
   end
+
+  --fonction onHover()
+
 end

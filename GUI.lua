@@ -44,18 +44,23 @@ local function newElement(x, y)
   return element
 end
 
-function GUI.newPanel(x,y,w,h)
+function GUI.newPanel(name,x,y,w,h)
   local panel = newElement(x, y)
+  panel.name = name
   panel.w = w
   panel.h = h
   panel.image = nil
   panel.isHover = false
-
+  panel.listEvents = {}
 
   function panel:setImage(image)
     self.image = image
     self.w = image:getWidth()
     self.h = image:getHeight()
+  end
+
+  function panel:setEvent(eventType, pFunction)
+    self.listEvents[eventType] = pFunction
   end
 
   function panel:drawPanel()
@@ -81,7 +86,9 @@ function GUI.newPanel(x,y,w,h)
       my > self.y and my < self.y + self.h then
         if self.isHover == false then
           self.isHover = true
-        --  print("hover")
+          if self.listEvents["hover"] ~= nil and self.visible == true then
+            self.listEvents["hover"](self.name)
+          end
         end
     else
       if self.isHover == true then
@@ -94,8 +101,8 @@ function GUI.newPanel(x,y,w,h)
   return panel
 end
 
-function GUI.newText(x,y,w,h,pText, font, horizontalAlign, verticalAlign)
-  local text = GUI.newPanel(x, y, w, h)
+function GUI.newText(name,x,y,w,h,pText, font, horizontalAlign, verticalAlign)
+  local text = GUI.newPanel(name,x, y, w, h)
   text.Text = pText
   text.font = font
   text.TextW = font:getWidth(pText)
@@ -127,13 +134,14 @@ function GUI.newText(x,y,w,h,pText, font, horizontalAlign, verticalAlign)
   return text
 end
 
-function GUI.newButton(x,y,w,h,pText,font)
-  local button = GUI.newPanel(x, y, w, h)
+function GUI.newButton(name,x,y,w,h,pText,font)
+  local button = GUI.newPanel(name,x, y, w, h)
   button.Text = pText
   button.font = font
-  button.label = GUI.newText(x, y - h, w, h, pText, font, "center", "center")
+  button.label = GUI.newText(name,x, y - h, w, h, pText, font, "center", "center")
   button.isPressed = false
   button.oldButtonState = false
+  button.visible = true
 
   function button:draw()
     if self.isPressed then
@@ -150,6 +158,8 @@ function GUI.newButton(x,y,w,h,pText,font)
     love.graphics.setColor(255, 0, 0)
     self.label.visible = true
     self.label:draw()
+    love.graphics.setColor(255, 255, 255)
+
   end
 
 
@@ -158,11 +168,17 @@ function GUI.newButton(x,y,w,h,pText,font)
     if self.isHover and love.mouse.isDown(1) and
         self.isPressed == false and
         self.oldButtonState == false then
-          print("clicked")
+          --print("clicked")
       self.isPressed = true
+      if self.listEvents["pressed"] ~= nil then
+        self.listEvents["pressed"]("begin")
+      end
     else
       if self.isPressed == true and love.mouse.isDown(1) == false then
         self.isPressed = false
+        if self.listEvents["pressed"] ~= nil then
+          self.listEvents["pressed"]("end")
+        end
       end
     end
     self.oldButtonState = love.mouse.isDown(1)
