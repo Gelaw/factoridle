@@ -25,13 +25,13 @@ function GUI.newGroup()
   return group
 end
 
-local function newElement(x, y)
+local function newElement(name, x, y)
   local element = {}
 
   element.x = x
   element.y = y
   element.visible = false
-
+  element.name = name
   function element:draw()
     print("newElement / draw / TODO")
   end
@@ -39,14 +39,18 @@ local function newElement(x, y)
     self.visible = visible
   end
   function element:update(dt)
-    --print("newElement / update / TODO")
   end
+
+  function element:onClick(pButton)
+  end
+  function element:onRelease(pButton)
+  end
+
   return element
 end
 
 function GUI.newPanel(name,x,y,w,h)
-  local panel = newElement(x, y)
-  panel.name = name
+  local panel = newElement(name,x, y)
   panel.w = w
   panel.h = h
   panel.image = nil
@@ -80,7 +84,7 @@ function GUI.newPanel(name,x,y,w,h)
   function panel:update(dt)
    self:updatePanel()
   end
-  function panel:updatePanel(dt)
+  function panel:hover()
     local mx, my = love.mouse.getPosition()
     if mx > self.x and mx < self.x + self.w and
       my > self.y and my < self.y + self.h then
@@ -96,6 +100,14 @@ function GUI.newPanel(name,x,y,w,h)
       end
     end
 
+  end
+  function panel:onClick(pButton)
+    if self.isHover and self.visible then
+      self.listEvents["pressed"](self.name)
+    end
+  end
+  function panel:updatePanel(dt)
+    self:hover()
   end
 
   return panel
@@ -162,10 +174,33 @@ function GUI.newButton(name,x,y,w,h,pText,font)
 
   end
 
+  function button:onClick(pButton)
+    if self.isHover and pButton == 1 and
+        self.isPressed == false and
+        self.oldButtonState == false then
+          print("clicked")
+      self.isPressed = true
+      if self.listEvents["pressed"] ~= nil then
+        self.listEvents["pressed"]("begin")
+      end
+    end
+    self.oldButtonState = true
+  end
+  
+  function button:onRelease(pButton)
+    if self.isPressed == true and pButton == 1 then
+      self.isPressed = false
+      if self.listEvents["pressed"] ~= nil then
+        self.listEvents["pressed"]("end")
+      end
+    end
+    self.oldButtonState = false
 
+  end
   function button:update(dt)
     self:updatePanel()
-    if self.isHover and love.mouse.isDown(1) and
+    --TODO:deplacer dans le main.lua > isPressed
+    --[[if self.isHover and love.mouse.isDown(1) and
         self.isPressed == false and
         self.oldButtonState == false then
           --print("clicked")
@@ -182,6 +217,7 @@ function GUI.newButton(name,x,y,w,h,pText,font)
       end
     end
     self.oldButtonState = love.mouse.isDown(1)
+    ]]
   end
 
   return button

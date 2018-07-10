@@ -51,7 +51,10 @@ function love.load()
   textInventaire:setEvent("hover", onPanelHover)
   button:setEvent("hover", onPanelHover)
   button:setEvent("pressed", onButtonClicked)
-
+  panelInventaire:setEvent("pressed", onButtonClicked)
+  panelCaracteristique:setEvent("pressed", onButtonClicked)
+  textCaracteristique:setEvent("pressed", onButtonClicked)
+  textInventaire:setEvent("pressed", onButtonClicked)
 end
 
 
@@ -75,7 +78,7 @@ function love.draw()
   love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
   love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
 
-  love.graphics.print(inventory:prompt(), 30, height / 2)
+  --love.graphics.print(inventory:prompt(), 30, height / 2)
 end
 timer = 0
 function love.update(dt)
@@ -124,12 +127,26 @@ function love.mousepressed(x, y, button, isTouch)
       end
     end
   end
+
+--TODO gestionnaire click GUI
+  for n,v in pairs(groupTest.elements) do
+    if v.isHover then
+      v:onClick(button)
+    end
+  end
+-----
 end
 
 function love.mousereleased(x, y, button, isTouch)
   if handledEntity then
     handledEntity = nil
   end
+  for n,v in pairs(groupTest.elements) do
+    if v.isHover then
+      v:onRelease(button)
+    end
+  end
+
 end
 
 function love.keypressed(key, scancode, isrepeat)
