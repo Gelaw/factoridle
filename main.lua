@@ -27,7 +27,22 @@ function love.load()
   entities[1]:init({x = 200, y = 200})
 
   entities[2] = Entity:new()
-  entities[2]:init({x = 300, y = 300})
+  entities[2]:init({x = 300, y = 200})
+
+  entities[3] = Entity:new()
+  entities[3]:init({x = 150, y = 350})
+
+  entities[4] = Entity:new()
+  entities[4]:init({x = 200, y = 400})
+
+  entities[5] = Entity:new()
+  entities[5]:init({x = 250, y = 400})
+
+  entities[6] = Entity:new()
+  entities[6]:init({x = 300, y = 400})
+
+  entities[7] = Entity:new()
+  entities[7]:init({x = 350, y = 350})
 
   inventory = Inventory:new()
   inventory:init(20)
@@ -60,9 +75,9 @@ end
 
 function love.draw()
   love.graphics.setColor(25, 25, 25)
-  for x = - posCam.x%50 - 50 ,  width, 50 do
-    for y = - posCam.y%50 - 50,  height, 50 do
-      love.graphics.rectangle("fill", x +1 , y +1 , 48, 48)
+  for x = - posCam.x%50 - 50 ,  width + 50, 50 do
+    for y = - posCam.y%50 - 50,  height + 50, 50 do
+      love.graphics.rectangle("fill", x -24 , y -24 , 48, 48)
     end
   end
   for e  = 1, #entities, 1 do
@@ -71,7 +86,7 @@ function love.draw()
   --draw test GUI
   groupTest:draw()
 
-  love.graphics.setColor(255,0,255)
+  love.graphics.setColor(255,255,255)
 
   love.graphics.print("cam: x:" ..posCam.x.." y:"..posCam.y, 30, 30)
   love.graphics.print("mouse: x:" .. love.mouse.getX() -width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
@@ -99,18 +114,28 @@ function testmove(entity, dx, dy)
         or entities[e]:doesTouch(entity.pos.x + dx + entity.dim.width / 2 - 1, entity.pos.y + dy + entity.dim.height / 2 - 1)
         or entities[e]:doesTouch(entity.pos.x + dx + entity.dim.width / 2 - 1, entity.pos.y + dy - entity.dim.height / 2 + 1)
         or entities[e]:doesTouch(entity.pos.x + dx - entity.dim.width / 2 + 1, entity.pos.y + dy + entity.dim.height / 2 - 1)) then
-        return
+        return false
     end
   end
   entity:move(dx, dy)
+  return true
 end
 
-handledEntity = {}
+function isFree(x, y, entity)
+  for e  = 1, #entities, 1 do
+    if entity ~= entities[e] and entities[e]:doesTouch(x, y) then
+      return false
+    end
+  end
+  return true
+end
+
+handledEntity = nil
 
 function love.mousemoved(x, y, dx, dy)
   if love.mouse.isDown(1) then
     if handledEntity and handledEntity.move then
-      testmove(handledEntity, dx,dy)
+      handledEntity:move(dx, dy)
     else
       posCam.x = posCam.x - dx
       posCam.y = posCam.y - dy
@@ -138,7 +163,25 @@ function love.mousepressed(x, y, button, isTouch)
 end
 
 function love.mousereleased(x, y, button, isTouch)
-  if handledEntity then
+  if handledEntity and handledEntity.pos then
+    x, y = 0, 0
+    if handledEntity.pos.x %50 < 25 then
+      x = handledEntity.pos.x - handledEntity.pos.x %50
+    else
+      x = handledEntity.pos.x - handledEntity.pos.x %50 + 50
+    end
+    if handledEntity.pos.y %50 < 25 then
+      y = handledEntity.pos.y - handledEntity.pos.y %50
+    else
+      y = handledEntity.pos.y - handledEntity.pos.y %50 + 50
+    end
+    isfree = isFree(x, y, handledEntity)
+    while isfree==false do
+      x  = x + 50
+      isfree = isFree(x, y, handledEntity)
+    end
+    handledEntity.pos.x = x
+    handledEntity.pos.y = y
     handledEntity = nil
   end
   for n,v in pairs(groupTest.elements) do
