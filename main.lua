@@ -4,15 +4,18 @@ local Item = require "item"
 local GUI = require "GUI"
 entities = {}
 local groupTest
-local panelTest1
-local panelTest2
-local textTest1
-local textTest2
+local panelInventaire
+local panelCaracteristique
+local textCaracteristique
+local textInventaire
 local button
 
 --function needed by Panel:setEvent
 function onPanelHover(state)
   print("Mouse is hover: "..state)
+end
+function onButtonClicked(state)
+  print(state.." click")
 end
 --
 
@@ -62,6 +65,8 @@ function love.load()
   textCaracteristique:setEvent("hover", onPanelHover)
   textInventaire:setEvent("hover", onPanelHover)
   button:setEvent("hover", onPanelHover)
+  button:setEvent("pressed", onButtonClicked)
+
 end
 
 
