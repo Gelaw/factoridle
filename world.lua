@@ -59,7 +59,7 @@ local World = {}
         local y = movingEntity.pos.y
         local width = movingEntity.dim.width
         local height = movingEntity.dim.height
-        if movingEntity ~= world.entities[e]
+        if movingEntity ~= entity
           and (entity:doesTouch(x + dx - width / 2 + 1, y + dy - height / 2 + 1)
             or entity:doesTouch(x + dx + width / 2 - 1, y + dy + height / 2 - 1)
             or entity:doesTouch(x + dx + width / 2 - 1, y + dy - height / 2 + 1)
