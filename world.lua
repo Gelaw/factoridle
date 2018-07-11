@@ -10,10 +10,10 @@ local World = {}
 
     function world:init()
       world.entities[1] = Entity:new()
-      world.entities[1]:init({x = 200, y = 200})
+      world.entities[1]:init({x = 200, y = 250})
 
       world.entities[2] = Entity:new()
-      world.entities[2]:init({x = 300, y = 200})
+      world.entities[2]:init({x = 300, y = 250})
 
       world.entities[3] = Entity:new()
       world.entities[3]:init({x = 150, y = 350})
@@ -35,8 +35,8 @@ local World = {}
     end
 
     function world:draw(posCam)
-      for e  = 1, #world.entities, 1 do
-        world.entities[e]:draw(posCam)
+      for i, entity in pairs(world.entities) do
+        entity:draw(posCam)
       end
     end
 
@@ -53,23 +53,27 @@ local World = {}
     end
 
 
-    function world:testmove(entity, dx, dy)
-      for e  = 1, #world.entities, 1 do
-        if entity ~= world.entities[e]
-          and (world.entities[e]:doesTouch(entity.pos.x + dx - entity.dim.width / 2 + 1, entity.pos.y + dy - entity.dim.height / 2 + 1)
-            or world.entities[e]:doesTouch(entity.pos.x + dx + entity.dim.width / 2 - 1, entity.pos.y + dy + entity.dim.height / 2 - 1)
-            or world.entities[e]:doesTouch(entity.pos.x + dx + entity.dim.width / 2 - 1, entity.pos.y + dy - entity.dim.height / 2 + 1)
-            or world.entities[e]:doesTouch(entity.pos.x + dx - entity.dim.width / 2 + 1, entity.pos.y + dy + entity.dim.height / 2 - 1)) then
+    function world:testmove(movingEntity, dx, dy)
+      for i, entity in pairs(world.entities) do
+        local x = movingEntity.pos.x
+        local y = movingEntity.pos.y
+        local width = movingEntity.dim.width
+        local height = movingEntity.dim.height
+        if movingEntity ~= world.entities[e]
+          and (entity:doesTouch(x + dx - width / 2 + 1, y + dy - height / 2 + 1)
+            or entity:doesTouch(x + dx + width / 2 - 1, y + dy + height / 2 - 1)
+            or entity:doesTouch(x + dx + width / 2 - 1, y + dy - height / 2 + 1)
+            or entity:doesTouch(x + dx - width / 2 + 1, y + dy + height / 2 - 1)) then
             return false
         end
       end
-      entity:move(dx, dy)
+      movingEntity:move(dx, dy)
       return true
     end
 
-    function world:isFree(x, y, entity)
-      for e  = 1, #world.entities, 1 do
-        if entity ~= world.entities[e] and world.entities[e]:doesTouch(x, y) then
+    function world:isFree(x, y, testingEntity)
+      for i, entity in pairs(world.entities) do
+        if testingEntity ~= entity and entity:doesTouch(x, y) then
           return false
         end
       end
