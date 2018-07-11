@@ -67,7 +67,7 @@ local World = {}
       return true
     end
 
-    function isFree(x, y, entity)
+    function world:isFree(x, y, entity)
       for e  = 1, #world.entities, 1 do
         if entity ~= world.entities[e] and world.entities[e]:doesTouch(x, y) then
           return false

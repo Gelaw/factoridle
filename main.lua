@@ -58,6 +58,9 @@ function love.draw()
     end
   end
   world:draw(posCam)
+  if handledEntity ~= nil then
+    handledEntity:draw(posCam)
+  end
   --draw test GUI
   groupTest:draw()
 
@@ -71,7 +74,6 @@ function love.draw()
   love.graphics.print(inventory:prompt(), 30, height / 2)
 end
 
-timer = 0
 function love.update(dt)
   groupTest:update(dt)
   world:update(dt)
@@ -122,10 +124,10 @@ function love.mousereleased(x, y, button, isTouch)
     else
       y = handledEntity.pos.y - handledEntity.pos.y %50 + 50
     end
-    isfree = isFree(x, y, handledEntity)
+    isfree = world:isFree(x, y, handledEntity)
     while isfree==false do
       x  = x + 50
-      isfree = isFree(x, y, handledEntity)
+      isfree = world:isFree(x, y, handledEntity)
     end
     handledEntity.pos.x = x
     handledEntity.pos.y = y
