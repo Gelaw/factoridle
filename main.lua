@@ -6,21 +6,12 @@ local Interface = require "interface"
 --
 local interface
 --
---[[
-local groupTest
-local panelInventaire
-local panelCaracteristique
-local textCaracteristique
-local textInventaire
-local button
-]]
-
 --function needed by Panel:setEvent
 function onPanelHover(target)
-  print("Mouse is hover: "..target)
+  print("Mouse is hover: "..target.name)
 end
 function onButtonClicked(target)
-  print(target.." clicked")
+  print(target.name .." clicked")
 end
 --
 
@@ -119,9 +110,7 @@ function love.mousereleased(x, y, button, isTouch)
 
   for n,v in pairs(interface.listGroup) do
     for i,u in pairs(v.elements) do
-      if u.isHover then
         u:onRelease(button)
-      end
     end
   end
 
@@ -132,5 +121,4 @@ function love.keypressed(key, scancode, isrepeat)
   if key ==  "t" then
     world:initTreeGeneration()
   end
-  --fonction onHover()
 end

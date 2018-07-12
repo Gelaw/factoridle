@@ -92,7 +92,7 @@ function GUI.newPanel(name,x,y,w,h)
         if self.isHover == false then
           self.isHover = true
           if self.listEvents["hover"] ~= nil and self.visible == true then
-            self.listEvents["hover"](self.name)
+            self.listEvents["hover"](self)
           end
         end
     else
@@ -104,7 +104,7 @@ function GUI.newPanel(name,x,y,w,h)
   end
   function panel:onClick(pButton)
     if self.isHover and self.visible then
-      self.listEvents["pressed"](self.name)
+      self.listEvents["pressed"](self)
     end
   end
   function panel:updatePanel(dt)
@@ -181,16 +181,16 @@ function GUI.newButton(name,x,y,w,h,pText,font)
         self.oldButtonState == false then
       self.isPressed = true
       if self.listEvents["pressed"] ~= nil then
-        self.listEvents["pressed"](self.name)
+        self.listEvents["pressed"](self)
       end
     end
     self.oldButtonState = true
   end
 
   function button:onRelease(pButton)
+
     if self.isPressed == true and pButton == 1 then
       self.isPressed = false
-
     end
     if self.isHover == false then
       self.isPressed = false
