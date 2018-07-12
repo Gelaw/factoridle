@@ -48,25 +48,14 @@ end
 function love.mousepressed(x, y, button, isTouch)
   world:mousepressed(x, y, button, isTouch)
 
---TODO gestionnaire click GUI
-  for n,v in pairs(interface.listGroup) do
-    for i,u in pairs(v.elements) do
-      if u.isHover then
-        u:onClick(button)
-      end
-    end
-  end
------
+  interface:onClick(button)
+
 end
 
 function love.mousereleased(x, y, button, isTouch)
   world:mousereleased(x, y, button, isTouch)
 
-  for n,v in pairs(interface.listGroup) do
-    for i,u in pairs(v.elements) do
-        u:onRelease(button)
-    end
-  end
+  interface:onRelease(button)
 
 end
 
