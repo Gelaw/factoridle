@@ -33,6 +33,8 @@ local function newElement(name, x, y)
   element.y = y
   element.visible = false
   element.name = name
+  element.isPressed = false
+
   function element:draw()
     print("newElement / draw / TODO")
   end
@@ -105,8 +107,20 @@ function GUI.newPanel(name,x,y,w,h)
   function panel:onClick(pButton)
     if self.isHover and self.visible then
       self.listEvents["pressed"](self)
+      self.isPressed = true
+
     end
   end
+  function panel:onRelease(pButton)
+    if self.isPressed == true and pButton == 1 then
+      self.isPressed = false
+    end
+    if self.isHover == false then
+      self.isPressed = false
+    end
+    self.oldButtonState = false
+  end
+
   function panel:updatePanel(dt)
     self:hover()
   end
@@ -196,8 +210,8 @@ function GUI.newButton(name,x,y,w,h,pText,font)
       self.isPressed = false
     end
     self.oldButtonState = false
-
   end
+
   function button:update(dt)
     self:updatePanel()
   end
