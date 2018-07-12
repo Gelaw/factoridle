@@ -1,11 +1,19 @@
+--Require
 local GUI = require "GUI"
 local World = require "world"
+local Interface = require "interface"
+
+--
+local interface
+--
+--[[
 local groupTest
 local panelInventaire
 local panelCaracteristique
 local textCaracteristique
 local textInventaire
 local button
+]]
 
 --function needed by Panel:setEvent
 function onPanelHover(target)
@@ -23,30 +31,33 @@ function love.load()
   world = World:new()
   world:init()
 
-
-
-  groupTest = GUI.newGroup()
-  panelInventaire = GUI.newPanel("Inventaire",width-300,0,300,200)
-  groupTest:addElement(panelInventaire)
-  panelCaracteristique = GUI.newPanel("Caracteristique",0,0,300,200)
-  groupTest:addElement(panelCaracteristique)
-  textCaracteristique = GUI.newText("textCaracteristique",0,0,300,200,"Caracteristique",love.graphics.getFont(), "center", "center")
-  groupTest:addElement(textCaracteristique)
-  textInventaire = GUI.newText("textInventaire",width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
-  groupTest:addElement(textInventaire)
-  button = GUI.newButton("button",width -110,(height /2) -37 ,100,75,"Click",love.graphics.getFont())
-  groupTest:addElement(button)
-
-  panelInventaire:setEvent("hover", onPanelHover)
-  panelCaracteristique:setEvent("hover", onPanelHover)
-  textCaracteristique:setEvent("hover", onPanelHover)
-  textInventaire:setEvent("hover", onPanelHover)
-  button:setEvent("hover", onPanelHover)
-  button:setEvent("pressed", onButtonClicked)
-  panelInventaire:setEvent("pressed", onButtonClicked)
-  panelCaracteristique:setEvent("pressed", onButtonClicked)
-  textCaracteristique:setEvent("pressed", onButtonClicked)
-  textInventaire:setEvent("pressed", onButtonClicked)
+  interface = Interface:new()
+  interface:init()
+  --
+  -- groupTest = GUI.newGroup()
+  -- panelInventaire = GUI.newPanel("Inventaire",width-300,0,300,200)
+  -- groupTest:addElement(panelInventaire)
+  -- panelCaracteristique = GUI.newPanel("Caracteristique",0,0,300,200)
+  -- groupTest:addElement(panelCaracteristique)
+  -- textCaracteristique = GUI.newText("textCaracteristique",0,0,300,200,"Caracteristique",love.graphics.getFont(), "center", "center")
+  -- groupTest:addElement(textCaracteristique)
+  -- textInventaire = GUI.newText("textInventaire",width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
+  -- groupTest:addElement(textInventaire)
+  -- button = GUI.newButton("button",width -110,(height /2) -37 ,100,75,"Click",love.graphics.getFont())
+  -- groupTest:addElement(button)
+  --
+  -- panelInventaire:setEvent("hover", onPanelHover)
+  -- panelCaracteristique:setEvent("hover", onPanelHover)
+  -- textCaracteristique:setEvent("hover", onPanelHover)
+  -- textInventaire:setEvent("hover", onPanelHover)
+  -- button:setEvent("hover", onPanelHover)
+  -- button:setEvent("pressed", onButtonClicked)
+  -- panelInventaire:setEvent("pressed", onButtonClicked)
+  -- panelCaracteristique:setEvent("pressed", onButtonClicked)
+  -- textCaracteristique:setEvent("pressed", onButtonClicked)
+  -- textInventaire:setEvent("pressed", onButtonClicked)
+  --
+  interface:addGroup(groupTest)
 end
 
 
@@ -59,7 +70,8 @@ function love.draw()
   end
   world:draw(posCam)
   --draw test GUI
-  groupTest:draw()
+  --groupTest:draw()
+  interface:draw()
 
   love.graphics.setColor(255,255,255)
 
@@ -73,7 +85,8 @@ end
 
 timer = 0
 function love.update(dt)
-  groupTest:update(dt)
+  --groupTest:update(dt)
+  interface:update(dt)
   world:update(dt)
 end
 
@@ -101,11 +114,11 @@ function love.mousepressed(x, y, button, isTouch)
   end
 
 --TODO gestionnaire click GUI
-  for n,v in pairs(groupTest.elements) do
-    if v.isHover then
-      v:onClick(button)
-    end
-  end
+  -- for n,v in pairs(groupTest.elements) do
+  --   if v.isHover then
+  --     v:onClick(button)
+  --   end
+  -- end
 -----
 end
 
@@ -131,32 +144,14 @@ function love.mousereleased(x, y, button, isTouch)
     handledEntity.pos.y = y
     handledEntity = nil
   end
-  for n,v in pairs(groupTest.elements) do
-      v:onRelease(button)
-  end
+  -- for n,v in pairs(groupTest.elements) do
+  --     v:onRelease(button)
+  -- end
 
 end
 
 function love.keypressed(key, scancode, isrepeat)
-  if key == "i" then
-    if panelInventaire.visible == true then
-      panelInventaire:setVisible(false)
-      textInventaire:setVisible(false)
-
-    else
-      panelInventaire:setVisible(true)
-      textInventaire:setVisible(true)
-    end
-  end
-  if key == "c" then
-    if panelCaracteristique.visible == true then
-      panelCaracteristique:setVisible(false)
-      textCaracteristique:setVisible(false)
-    else
-      panelCaracteristique:setVisible(true)
-      textCaracteristique:setVisible(true)
-    end
-  end
+  interface:keypressed(key,scancode,isrepeat)
   if key ==  "r" then
     inventory:removeSlot(1)
   end

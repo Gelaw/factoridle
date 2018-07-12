@@ -1,8 +1,9 @@
 local GUI = {}
 
-function GUI.newGroup()
+function GUI.newGroup(key)
   local group = {}
   group.elements = {}
+  group.key = {}
 
   function group:addElement(element)
     table.insert(self.elements, element)
