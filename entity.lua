@@ -3,14 +3,18 @@ local Entity = {}
   function Entity:new(pos,dim,image)
     local entity = {}
     entity.image = {}
-    entity.pos = {x = 0, y = 0}
+    if pos then
+      entity.pos = pos
+    else
+      entity.pos = {x = 0, y = 0}
+    end
     if dim then
       entity.dim = dim
     else
       entity.dim = {width = 50, height = 50}
     end
     entity.movable = true
-
+    print(entity.pos.x, entity.pos.y)
     function entity:move(dx, dy)
       if entity.movable == false then
         return

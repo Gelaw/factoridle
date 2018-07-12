@@ -12,6 +12,8 @@ local World = {}
     world.posCam = {x = 0, y = 0}
     local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
     table.insert(world.entities, forest)
+    local e = Entity:new({x=200,y=200}, {width = 50, height = 50})
+    table.insert(world.entities, e)
 
     function world:draw()
       love.graphics.setColor(25, 25, 25)

@@ -6,13 +6,13 @@ function Item:new(dataID, quantity)
   item.quantity = quantity
 
   function item:getName()
-    return data[item.dataID]["name"]
+    return Item.data[item.dataID]["name"]
   end
 
   return item
 end
 
-local data = {{id = 1, name = "default", type = 1},
+Item.data = {{id = 1, name = "default", type = 1},
             {id = 2, name = "wood", type = 2},
             {id = 3, name = "stone", type = 2},
             {id = 4, name = "iron ore", type = 2},
