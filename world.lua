@@ -1,57 +1,39 @@
 local Entity = require "entity"
 local Inventory = require "inventory"
 local Item = require "item"
+local RessourceGenerator = require "ressourceGenerator"
 
 local World = {}
 
   function World:new()
     world = {}
     world.entities = {}
+    inventory = Inventory:new(20)
 
-    function world:init()
-      world.entities[1] = Entity:new()
-      world.entities[1]:init({x = 200, y = 250})
-
-      world.entities[2] = Entity:new()
-      world.entities[2]:init({x = 300, y = 250})
-
-      world.entities[3] = Entity:new()
-      world.entities[3]:init({x = 150, y = 350})
-
-      world.entities[4] = Entity:new()
-      world.entities[4]:init({x = 200, y = 400})
-
-      world.entities[5] = Entity:new()
-      world.entities[5]:init({x = 250, y = 400})
-
-      world.entities[6] = Entity:new()
-      world.entities[6]:init({x = 300, y = 400})
-
-      world.entities[7] = Entity:new()
-      world.entities[7]:init({x = 350, y = 350})
-
-      inventory = Inventory:new()
-      inventory:init(20)
-    end
+    forest = RessourceGenerator:new({x = 50, y = 50}, 2)
+    table.insert(world.entities, forest)
 
     function world:draw(posCam)
+      love.graphics.setColor(25, 25, 25)
+      for x = - posCam.x%50 - 50 ,  width + 50, 50 do
+        for y = - posCam.y%50 - 50,  height + 50, 50 do
+          love.graphics.rectangle("fill", x -24 , y -24 , 48, 48)
+        end
+      end
       for i, entity in pairs(world.entities) do
         entity:draw(posCam)
       end
+      love.graphics.setColor(255,255,255)
+      love.graphics.print(forest.inventory:prompt(), 30, height / 2)
     end
 
-    timer = 0
     function world:update(dt)
-      timer = timer + dt
-      if timer > 1 then
-        timer = 0
-        item = Item:new()
-        local idtype = math.floor((#Item.stereotypes - 1) * love.math.random() + 2)
-        item:init(idtype, 1)
-        inventory:add(item)
-      end
+      forest:update(dt)
     end
 
+    function world:initTreeGeneration()
+      forest:initGeneration()
+    end
 
     function world:testmove(movingEntity, dx, dy)
       for i, entity in pairs(world.entities) do

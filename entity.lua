@@ -1,21 +1,15 @@
 local Entity = {}
 
-  function Entity:new()
+  function Entity:new(pos,dim,image)
     local entity = {}
     entity.image = {}
     entity.pos = {x = 0, y = 0}
-    entity.dim = {width = 50, height = 50}
-    entity.movable = true
-
-    function entity:init(pos,image,dim)
-      entity.pos = pos
-      if image then
-        entity.image = image
-      end
-      if dim then
-        entity.dim = dim
-      end
+    if dim then
+      entity.dim = dim
+    else
+      entity.dim = {width = 50, height = 50}
     end
+    entity.movable = true
 
     function entity:move(dx, dy)
       if entity.movable == false then

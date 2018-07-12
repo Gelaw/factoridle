@@ -21,9 +21,6 @@ function love.load()
   height = love.graphics.getHeight()
   posCam = {x = 0, y = 0}
   world = World:new()
-  world:init()
-
-
 
   groupTest = GUI.newGroup()
   panelInventaire = GUI.newPanel("Inventaire",width-300,0,300,200)
@@ -51,12 +48,6 @@ end
 
 
 function love.draw()
-  love.graphics.setColor(25, 25, 25)
-  for x = - posCam.x%50 - 50 ,  width + 50, 50 do
-    for y = - posCam.y%50 - 50,  height + 50, 50 do
-      love.graphics.rectangle("fill", x -24 , y -24 , 48, 48)
-    end
-  end
   world:draw(posCam)
   if handledEntity ~= nil then
     handledEntity:draw(posCam)
@@ -71,7 +62,7 @@ function love.draw()
   love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
   love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
 
-  love.graphics.print(inventory:prompt(), 30, height / 2)
+
 end
 
 function love.update(dt)
@@ -144,7 +135,6 @@ function love.keypressed(key, scancode, isrepeat)
     if panelInventaire.visible == true then
       panelInventaire:setVisible(false)
       textInventaire:setVisible(false)
-
     else
       panelInventaire:setVisible(true)
       textInventaire:setVisible(true)
@@ -159,10 +149,8 @@ function love.keypressed(key, scancode, isrepeat)
       textCaracteristique:setVisible(true)
     end
   end
-  if key ==  "r" then
-    inventory:removeSlot(1)
+  if key ==  "t" then
+    world:initTreeGeneration()
   end
-
   --fonction onHover()
-
 end

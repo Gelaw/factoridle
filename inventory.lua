@@ -1,21 +1,17 @@
 local Item = require "item"
 local Inventory = {}
 
-  function Inventory:new()
-    inventory = {}
-    inventory.size = 20
+  function Inventory:new(size)
+    local inventory = {}
+    inventory.size = size
     inventory.items = {}
-
-    function inventory:init(size)
-      inventory.size = size
-      for i = 1, size, 1 do
-        inventory.items[i] = "empty"
-      end
+    for i = 1, size, 1 do
+      inventory.items[i] = "empty"
     end
 
     function inventory:add(stack)
       for i, item in pairs(inventory.items) do
-        if item ~= "empty" and item.idtype == stack.idtype then
+        if item ~= "empty" and item.dataID == stack.dataID then
           item.quantity = item.quantity + stack.quantity
           return
         elseif item == "empty" then
@@ -25,11 +21,11 @@ local Inventory = {}
       end
     end
 
-    function inventory:removeQuantity(itemType, quantity)
+    function inventory:removeQuantity(dataID, quantity)
       local stack = Item:new()
       stack:init(itemType, 0)
       for i, item in pairs(inventory.items) do
-        if item.idtype == stack.idtype then
+        if item.dataID == stack.dataID then
           if item.quantity >= quantity then
             if item.quantity == quantity then
               inventory.items[i] = "empty"
@@ -61,10 +57,10 @@ local Inventory = {}
 
     function inventory:prompt()
       local string = "inventory:"
-      for i = 1, inventory.size, 1 do
+      for i, item in pairs(inventory.items) do
         string = string .."\n   slot ".. i..": "
-        if inventory.items[i] ~= "empty" then
-           string  = string .. inventory.items[i].quantity.. " " .. inventory.items[i].name
+        if item ~= "empty" then
+           string  = string .. item.quantity.. " " .. item:getName()
          else
             string  = string .. "empty."
          end
