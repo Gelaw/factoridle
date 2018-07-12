@@ -80,6 +80,7 @@ function Interface:new()
       end
     end
   end
+  
   function interface:onClick(button)
     for n,v in pairs(self.listGroup) do
       for i,u in pairs(v.elements) do
@@ -89,6 +90,7 @@ function Interface:new()
       end
     end
   end
+
   function interface:onRelease(button)
     for n,v in pairs(self.listGroup) do
       for i,u in pairs(v.elements) do

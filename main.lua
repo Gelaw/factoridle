@@ -40,16 +40,26 @@ function love.update(dt)
   interface:update(dt)
   world:update(dt)
 end
-
+function test()
+  for n,v in pairs(interface.listGroup) do
+    for i,u in pairs(v.elements) do
+      if u.isPressed == true then
+        return true
+      end
+    end
+  end
+  return false
+end
 function love.mousemoved(x, y, dx, dy)
-  world:mousemoved(x, y, dx, dy)
+  if test() == true then
+  else
+    world:mousemoved(x, y, dx, dy)
+  end
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  world:mousepressed(x, y, button, isTouch)
-
-  interface:onClick(button)
-
+    interface:onClick(button)
+    world:mousepressed(x, y, button, isTouch)
 end
 
 function love.mousereleased(x, y, button, isTouch)
