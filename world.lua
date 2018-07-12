@@ -12,8 +12,7 @@ local World = {}
     world.posCam = {x = 0, y = 0}
     local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
     table.insert(world.entities, forest)
-    local e = Entity:new({x=200,y=200}, {width = 50, height = 50})
-    table.insert(world.entities, e)
+    table.insert(world.entities, Entity:new({x=200,y=200}, {width = 50, height = 50}))
 
     function world:draw()
       love.graphics.setColor(25, 25, 25)
@@ -108,7 +107,7 @@ local World = {}
 
     function world:mousemoved(x, y, dx, dy)
       if love.mouse.isDown(1) then
-        if world.handledEntity and world.handledEntity.move then
+        if world.handledEntity then
           world.handledEntity:move(dx, dy)
         else
           world.posCam.x = world.posCam.x - dx

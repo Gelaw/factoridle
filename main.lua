@@ -51,9 +51,9 @@ function test()
   return false
 end
 function love.mousemoved(x, y, dx, dy)
-  if math.abs(dx) < 5 and math.abs(dy) < 5 then
-    return
-  end
+  -- if math.abs(dx) < 2 and math.abs(dy) < 2 then
+  --   return
+  -- end
   if test() == true then
   else
     world:mousemoved(x, y, dx, dy)
