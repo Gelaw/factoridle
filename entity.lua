@@ -21,6 +21,7 @@ local Entity = {}
       end
       entity.pos.x = entity.pos.x + dx
       entity.pos.y = entity.pos.y + dy
+
     end
 
     function entity:doesTouch(x, y)

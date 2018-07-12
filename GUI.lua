@@ -168,7 +168,7 @@ function GUI.newButton(name,x,y,w,h,pText,font)
   button.label = GUI.newText(name,x, y - h, w, h, pText, font, "center", "center")
   button.isPressed = false
   button.oldButtonState = false
-  button.visible = true
+  --button.visible = false
 
   function button:draw()
     if self.isPressed then

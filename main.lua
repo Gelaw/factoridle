@@ -43,7 +43,10 @@ end
 function test()
   for n,v in pairs(interface.listGroup) do
     for i,u in pairs(v.elements) do
-      if u.isHover == true or u.isPressed then
+      if u.isPressed == true then
+        return true
+      end
+      if u.visible and u.isHover then
         return true
       end
     end
@@ -57,6 +60,7 @@ function love.mousemoved(x, y, dx, dy)
   if test() == true then
   else
     world:mousemoved(x, y, dx, dy)
+
   end
 end
 
