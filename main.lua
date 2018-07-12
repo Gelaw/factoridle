@@ -69,6 +69,9 @@ function love.draw()
     end
   end
   world:draw(posCam)
+  if handledEntity ~= nil then
+    handledEntity:draw(posCam)
+  end
   --draw test GUI
   --groupTest:draw()
   interface:draw()
@@ -76,14 +79,13 @@ function love.draw()
   love.graphics.setColor(255,255,255)
 
   love.graphics.print("cam: x:" ..posCam.x.." y:"..posCam.y, 30, 30)
-  love.graphics.print("mouse: x:" .. love.mouse.getX() -width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
+  love.graphics.print("mouse: x:" .. love.mouse.getX() - width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
   love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
   love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
 
   love.graphics.print(inventory:prompt(), 30, height / 2)
 end
 
-timer = 0
 function love.update(dt)
   --groupTest:update(dt)
   interface:update(dt)
@@ -104,10 +106,10 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  for e  = 1, #world.entities, 1 do
-    if world.entities[e]:doesTouch(x - width/2 + posCam.x, y - height/2 + posCam.y) then
+  for i, entity in pairs(world.entities) do
+    if entity:doesTouch(x - width/2 + posCam.x, y - height/2 + posCam.y) then
       if handledEntity == nil then
-        handledEntity = world.entities[e]
+        handledEntity = entity
         return
       end
     end
@@ -135,10 +137,10 @@ function love.mousereleased(x, y, button, isTouch)
     else
       y = handledEntity.pos.y - handledEntity.pos.y %50 + 50
     end
-    isfree = isFree(x, y, handledEntity)
+    isfree = world:isFree(x, y, handledEntity)
     while isfree==false do
       x  = x + 50
-      isfree = isFree(x, y, handledEntity)
+      isfree = world:isFree(x, y, handledEntity)
     end
     handledEntity.pos.x = x
     handledEntity.pos.y = y

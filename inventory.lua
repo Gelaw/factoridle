@@ -14,11 +14,11 @@ local Inventory = {}
     end
 
     function inventory:add(stack)
-      for i = 1, inventory.size, 1 do
-        if inventory.items[i] ~= "empty" and inventory.items[i].idtype == stack.idtype then
-          inventory.items[i].quantity = inventory.items[i].quantity + stack.quantity
+      for i, item in pairs(inventory.items) do
+        if item ~= "empty" and item.idtype == stack.idtype then
+          item.quantity = item.quantity + stack.quantity
           return
-        elseif inventory.items[i] == "empty" then
+        elseif item == "empty" then
           inventory.items[i] = stack
           return
         end
@@ -28,19 +28,19 @@ local Inventory = {}
     function inventory:removeQuantity(itemType, quantity)
       local stack = Item:new()
       stack:init(itemType, 0)
-      for i = 1, #inventory.items, 1 do
-        if inventory.items[i].idtype == stack.idtype then
-          if inventory.items[i].quantity >= quantity then
-            if inventory.items[i].quantity == quantity then
+      for i, item in pairs(inventory.items) do
+        if item.idtype == stack.idtype then
+          if item.quantity >= quantity then
+            if item.quantity == quantity then
               inventory.items[i] = "empty"
             else
-              inventory.items[i].quantity = inventory.items[i].quantity - quantity
+              item.quantity = item.quantity - quantity
             end
             stack.quantity = quantity
             return stack
           else
-            quantity = quantity - inventory.items[i].quantity
-            stack.quantity = inventory.items[i].quantity
+            quantity = quantity - item.quantity
+            stack.quantity = item.quantity
             inventory.items[i] = "empty"
           end
         end
@@ -60,7 +60,7 @@ local Inventory = {}
     end
 
     function inventory:prompt()
-      string = "inventory:"
+      local string = "inventory:"
       for i = 1, inventory.size, 1 do
         string = string .."\n   slot ".. i..": "
         if inventory.items[i] ~= "empty" then

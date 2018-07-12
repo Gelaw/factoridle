@@ -26,10 +26,14 @@ local Entity = {}
     end
 
     function entity:doesTouch(x, y)
-      if x > entity.pos.x - entity.dim.width / 2
-      and x < entity.pos.x + entity.dim.width / 2
-      and y > entity.pos.y - entity.dim.height / 2
-      and y < entity.pos.y + entity.dim.height / 2 then
+      local ex = entity.pos.x
+      local ey = entity.pos.y
+      local ew = entity.dim.width
+      local eh = entity.dim.height
+      if x > ex - ew / 2
+      and x < ex + ew / 2
+      and y > ey - eh / 2
+      and y < ey + eh / 2 then
         return true
       end
       return false
