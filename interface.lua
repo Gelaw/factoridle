@@ -80,7 +80,22 @@ function Interface:new()
       end
     end
   end
-
+  function interface:onClick(button)
+    for n,v in pairs(self.listGroup) do
+      for i,u in pairs(v.elements) do
+        if u.isHover then
+          u:onClick(button)
+        end
+      end
+    end
+  end
+  function interface:onRelease(button)
+    for n,v in pairs(self.listGroup) do
+      for i,u in pairs(v.elements) do
+          u:onRelease(button)
+      end
+    end
+  end
 
   return interface
 end
