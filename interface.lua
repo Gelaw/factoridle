@@ -65,7 +65,6 @@ function Interface:new()
       if panelInventaire.visible == true then
         panelInventaire:setVisible(false)
         textInventaire:setVisible(false)
-        print("here")
       else
         panelInventaire:setVisible(true)
         textInventaire:setVisible(true)
