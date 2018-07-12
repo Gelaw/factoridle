@@ -6,25 +6,32 @@ local RessourceGenerator = require "ressourceGenerator"
 local World = {}
 
   function World:new()
-    world = {}
+    local world = {}
     world.entities = {}
-    inventory = Inventory:new(20)
-
-    forest = RessourceGenerator:new({x = 50, y = 50}, 2)
+    world.inventory = Inventory:new(20)
+    world.posCam = {x = 0, y = 0}
+    local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
     table.insert(world.entities, forest)
 
-    function world:draw(posCam)
+    function world:draw()
       love.graphics.setColor(25, 25, 25)
-      for x = - posCam.x%50 - 50 ,  width + 50, 50 do
-        for y = - posCam.y%50 - 50,  height + 50, 50 do
+      for x = - world.posCam.x%50 - 50 ,  width + 50, 50 do
+        for y = - world.posCam.y%50 - 50,  height + 50, 50 do
           love.graphics.rectangle("fill", x -24 , y -24 , 48, 48)
         end
       end
       for i, entity in pairs(world.entities) do
-        entity:draw(posCam)
+        entity:draw(world.posCam)
+      end
+      if world.handledEntity ~= nil then
+        world.handledEntity:draw(world.posCam)
       end
       love.graphics.setColor(255,255,255)
       love.graphics.print(forest.inventory:prompt(), 30, height / 2)
+      love.graphics.print("cam: x:" ..world.posCam.x.." y:"..world.posCam.y, 30, 30)
+      love.graphics.print("mouse: x:" .. love.mouse.getX() - width/2 + world.posCam.x   .. " y:" ..love.mouse.getY() -height/2 + world.posCam.y, 30, 50)
+      love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
+      love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
     end
 
     function world:update(dt)
@@ -60,6 +67,52 @@ local World = {}
         end
       end
       return true
+    end
+
+    function world:mousepressed(x, y, button, isTouch)
+      for i, entity in pairs(world.entities) do
+        if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
+          if world.handledEntity == nil then
+            world.handledEntity = entity
+            return
+          end
+        end
+      end
+    end
+
+    function world:mousereleased()
+      if world.handledEntity and world.handledEntity.pos then
+        x, y = 0, 0
+        if world.handledEntity.pos.x %50 < 25 then
+          x = world.handledEntity.pos.x - world.handledEntity.pos.x %50
+        else
+          x = world.handledEntity.pos.x - world.handledEntity.pos.x %50 + 50
+        end
+        if world.handledEntity.pos.y %50 < 25 then
+          y = world.handledEntity.pos.y - world.handledEntity.pos.y %50
+        else
+          y = world.handledEntity.pos.y - world.handledEntity.pos.y %50 + 50
+        end
+        isfree = world:isFree(x, y, handledEntity)
+        while isfree==false do
+          x  = x + 50
+          isfree = world:isFree(x, y, handledEntity)
+        end
+        world.handledEntity.pos.x = x
+        world.handledEntity.pos.y = y
+        world.handledEntity = nil
+      end
+    end
+
+    function world:mousemoved(x, y, dx, dy)
+      if love.mouse.isDown(1) then
+        if world.handledEntity and world.handledEntity.move then
+          world.handledEntity:move(dx, dy)
+        else
+          world.posCam.x = world.posCam.x - dx
+          world.posCam.y = world.posCam.y - dy
+        end
+      end
     end
 
     return world

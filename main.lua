@@ -18,7 +18,6 @@ end
 function love.load()
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
-  posCam = {x = 0, y = 0}
   world = World:new()
 
   interface = Interface:new()
@@ -29,20 +28,11 @@ end
 
 
 function love.draw()
-  world:draw(posCam)
-  if handledEntity ~= nil then
-    handledEntity:draw(posCam)
-  end
+  world:draw()
 
   interface:draw()
 
   love.graphics.setColor(255,255,255)
-
-  love.graphics.print("cam: x:" ..posCam.x.." y:"..posCam.y, 30, 30)
-  love.graphics.print("mouse: x:" .. love.mouse.getX() - width/2 + posCam.x   .. " y:" ..love.mouse.getY() -height/2 + posCam.y, 30, 50)
-  love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
-  love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
-
 
 end
 
@@ -51,28 +41,12 @@ function love.update(dt)
   world:update(dt)
 end
 
-handledEntity = nil
-
 function love.mousemoved(x, y, dx, dy)
-  if love.mouse.isDown(1) then
-    if handledEntity and handledEntity.move then
-      handledEntity:move(dx, dy)
-    else
-      posCam.x = posCam.x - dx
-      posCam.y = posCam.y - dy
-    end
-  end
+  world:mousemoved(x, y, dx, dy)
 end
 
 function love.mousepressed(x, y, button, isTouch)
-  for i, entity in pairs(world.entities) do
-    if entity:doesTouch(x - width/2 + posCam.x, y - height/2 + posCam.y) then
-      if handledEntity == nil then
-        handledEntity = entity
-        return
-      end
-    end
-  end
+  world:mousepressed(x, y, button, isTouch)
 
 --TODO gestionnaire click GUI
   for n,v in pairs(interface.listGroup) do
@@ -86,27 +60,7 @@ function love.mousepressed(x, y, button, isTouch)
 end
 
 function love.mousereleased(x, y, button, isTouch)
-  if handledEntity and handledEntity.pos then
-    x, y = 0, 0
-    if handledEntity.pos.x %50 < 25 then
-      x = handledEntity.pos.x - handledEntity.pos.x %50
-    else
-      x = handledEntity.pos.x - handledEntity.pos.x %50 + 50
-    end
-    if handledEntity.pos.y %50 < 25 then
-      y = handledEntity.pos.y - handledEntity.pos.y %50
-    else
-      y = handledEntity.pos.y - handledEntity.pos.y %50 + 50
-    end
-    isfree = world:isFree(x, y, handledEntity)
-    while isfree==false do
-      x  = x + 50
-      isfree = world:isFree(x, y, handledEntity)
-    end
-    handledEntity.pos.x = x
-    handledEntity.pos.y = y
-    handledEntity = nil
-  end
+  world:mousereleased(x, y, button, isTouch)
 
   for n,v in pairs(interface.listGroup) do
     for i,u in pairs(v.elements) do
