@@ -93,10 +93,10 @@ local World = {}
         else
           y = world.handledEntity.pos.y - world.handledEntity.pos.y %50 + 50
         end
-        isfree = world:isFree(x, y, handledEntity)
+        isfree = world:isFree(x, y, world.handledEntity)
         while isfree==false do
           x  = x + 50
-          isfree = world:isFree(x, y, handledEntity)
+          isfree = world:isFree(x, y, world.handledEntity)
         end
         world.handledEntity.pos.x = x
         world.handledEntity.pos.y = y
