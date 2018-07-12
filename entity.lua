@@ -14,7 +14,6 @@ local Entity = {}
       entity.dim = {width = 50, height = 50}
     end
     entity.movable = true
-    print(entity.pos.x, entity.pos.y)
     function entity:move(dx, dy)
       if entity.movable == false then
         return
