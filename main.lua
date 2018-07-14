@@ -29,17 +29,14 @@ end
 
 function love.draw()
   world:draw()
-
   interface:draw()
-
-  love.graphics.setColor(255,255,255)
-
 end
 
 function love.update(dt)
   interface:update(dt)
   world:update(dt)
 end
+
 function test()
   for n,v in pairs(interface.listGroup) do
     for i,u in pairs(v.elements) do
@@ -54,13 +51,8 @@ function test()
   return false
 end
 function love.mousemoved(x, y, dx, dy)
-  -- if math.abs(dx) < 2 and math.abs(dy) < 2 then
-  --   return
-  -- end
-  if test() == true then
-  else
+  if test() == false then
     world:mousemoved(x, y, dx, dy)
-
   end
 end
 
@@ -70,15 +62,16 @@ function love.mousepressed(x, y, button, isTouch)
 end
 
 function love.mousereleased(x, y, button, isTouch)
-  world:mousereleased(x, y, button, isTouch)
-
   interface:onRelease(button)
-
+  world:mousereleased(x, y, button, isTouch)
 end
 
 function love.keypressed(key, scancode, isrepeat)
   interface:keypressed(key,scancode,isrepeat)
   if key ==  "t" then
     world:initTreeGeneration()
+  end
+  if key ==  "p" then
+    world.inventory:dragItemOnWorld(1, {x =love.mouse.getX() - width/2 + world.posCam.x , y = love.mouse.getY() -height/2 + world.posCam.y})
   end
 end

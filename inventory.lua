@@ -13,10 +13,10 @@ local Inventory = {}
       for i, item in pairs(inventory.items) do
         if item ~= "empty" and item.dataID == stack.dataID then
           item.quantity = item.quantity + stack.quantity
-          return
+          return true
         elseif item == "empty" then
           inventory.items[i] = stack
-          return
+          return true
         end
       end
     end
@@ -47,11 +47,21 @@ local Inventory = {}
       return false
     end
 
-    function inventory:removeSlot(slot)
+    function inventory:removeSlot(slot, quantity)
+      if quantity == nil then
+        quantity = 1
+      end
       if inventory.items[slot] ~= "empty" then
         local stack = inventory.items[slot]
-        inventory.items[slot] = "empty"
-        return stack
+        if stack.quantity < quantity then
+          return nil
+        end
+        if stack.quantity == quantity then
+          inventory.items[slot] = "empty"
+          return stack
+        end
+        stack.quantity = stack.quantity - quantity
+        return Item:new(stack.dataID, quantity)
       end
     end
 
@@ -66,6 +76,24 @@ local Inventory = {}
          end
       end
       return string
+    end
+
+    function inventory:dragItemOnSlot(item, slot)
+      if not inventory.items[slot] then
+      elseif inventory.items[slot] == "empty" then
+        item:dragOnInventory()
+        inventory.items[slot] = item
+      elseif inventory.items[slot].type == item.type then
+        inventory.items[slot].quantity = inventory.items[slot].quantity + item.quantity
+      end
+    end
+
+    function inventory:dragItemOnWorld(slot, pos)
+      if not inventory.items[slot] then
+      elseif inventory.items[slot].isMachine == true then
+       local item = inventory:removeSlot(slot)
+       item:dropOnWorld(pos)
+      end
     end
 
     return inventory

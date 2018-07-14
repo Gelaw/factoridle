@@ -1,3 +1,4 @@
+local Entity = require "entity"
 local Item = {}
 
 function Item:new(dataID, quantity)
@@ -5,8 +6,37 @@ function Item:new(dataID, quantity)
   item.dataID = dataID
   item.quantity = quantity
 
+
   function item:getName()
     return Item.data[item.dataID]["name"]
+  end
+
+  function item:getType()
+    return Item.data[item.dataID]["type"]
+  end
+
+  function item:getSubtype()
+    return Item.data[item.dataID]["subtype"]
+  end
+
+  function item:dropOnWorld(pos)
+    if item.isMachine and item.entity == nil then
+      item.entity = Entity:newMachine(pos)
+      item.entity.item = item
+      world:addEntity(item.entity)
+    end
+    return item.entity
+  end
+
+  function item:dragOnInventory()
+    if item.isMachine and item.entity then
+      world:removeEntity(item.entity)
+      item.entity = nil
+    end
+  end
+
+  if item:getType() == 3 then
+    item.isMachine = true
   end
 
   return item
