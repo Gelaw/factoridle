@@ -79,9 +79,9 @@ local Entity = {}
       return false
     end
 
-    entity.r = love.math.random() * 255
-    entity.g = love.math.random() * 255
-    entity.b = love.math.random() * 255
+    entity.r = 55 + love.math.random() * 200
+    entity.g = 55 + love.math.random() * 200
+    entity.b = 55 + love.math.random() * 200
 
     function entity:draw(posCam)
       if entity.ghost then

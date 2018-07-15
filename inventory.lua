@@ -13,9 +13,11 @@ local Inventory = {}
       for i, item in pairs(inventory.items) do
         if item ~= "empty" and item.dataID == stack.dataID then
           item.quantity = item.quantity + stack.quantity
+          stack:dragOnInventory()
           return true
         elseif item == "empty" then
           inventory.items[i] = stack
+          stack:dragOnInventory()
           return true
         end
       end

@@ -77,12 +77,23 @@ local World = {}
     end
 
     function world:mousepressed(x, y, button, isTouch)
-      for i, entity in pairs(world.entities) do
-        if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
-          if world.handledEntity == nil and entity.movable == true then
-            world.handledEntity = entity
-            entity.ghost = true
-            return
+      if button == 1 then
+        for i, entity in pairs(world.entities) do
+          if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
+            if world.handledEntity == nil and entity.movable == true then
+              world.handledEntity = entity
+              entity.ghost = true
+              return
+            end
+          end
+        end
+      elseif button == 2 then
+        for i, entity in pairs(world.entities) do
+          if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
+            if entity.item then
+              world.inventory:add(entity.item)
+              return
+            end
           end
         end
       end
@@ -103,6 +114,15 @@ local World = {}
         else
           world.posCam.x = world.posCam.x - dx
           world.posCam.y = world.posCam.y - dy
+        end
+      end
+    end
+
+    function world:removeEntity(entity)
+      for e, ent in pairs(world.entities) do
+        if entity == ent then
+          table.remove(world.entities, e)
+          return
         end
       end
     end
