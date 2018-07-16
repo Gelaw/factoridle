@@ -101,7 +101,7 @@ local World = {}
 
     function world:mousereleased()
       if world.handledEntity and world.handledEntity.pos then
-        world.handledEntity:moveTo( love.mouse.getX() - width/2 + world.posCam.x,love.mouse.getY() -height/2 + world.posCam.y )
+        world.handledEntity:moveTo(love.mouse.getX() - width/2 + world.posCam.x, love.mouse.getY() -height/2 + world.posCam.y )
         world.handledEntity.ghost = false
         world.handledEntity = nil
       end
@@ -109,11 +109,21 @@ local World = {}
 
     function world:mousemoved(x, y, dx, dy)
       if love.mouse.isDown(1) then
-        if world.handledEntity then
-        --  world.handledEntity:move(dx, dy)
-        else
-          world.posCam.x = world.posCam.x - dx
-          world.posCam.y = world.posCam.y - dy
+        if world.handledEntity == nil then
+          if world.posCam.x - dx < -5000 then
+            world.posCam.x = -5000
+          elseif world.posCam.x - dx > 5000 then
+            world.posCam.x = 5000
+          else
+            world.posCam.x = world.posCam.x - dx
+          end
+          if world.posCam.y - dy < -5000 then
+            world.posCam.y = -5000
+          elseif world.posCam.y - dy > 5000 then
+            world.posCam.y = 5000
+          else
+            world.posCam.y = world.posCam.y - dy
+          end
         end
       end
     end
