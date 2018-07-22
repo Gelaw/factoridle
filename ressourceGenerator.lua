@@ -8,8 +8,8 @@ local RessourceGenerator = {}
     local ressourceGenerator = Entity:new(pos, {width = RessourceGenerator.data[dataID]["width"], height = RessourceGenerator.data[dataID]["height"]})
     ressourceGenerator.movable = false
 
-    ressourceGenerator.toolSlot = Inventory:new(1)
-    ressourceGenerator.inventory = Inventory:new(20)
+    ressourceGenerator.toolSlot = Inventory:new({width = 1, height = 1})
+    ressourceGenerator.inventory = Inventory:new({width = 5, height = 4})
     ressourceGenerator.isGenerating = false
     ressourceGenerator.timer = 0
 

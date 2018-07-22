@@ -5,7 +5,7 @@ local Inventory = {}
     local inventory = {}
     inventory.size = size
     inventory.items = {}
-    for i = 1, size, 1 do
+    for i = 1, size.width * size.height, 1 do
       inventory.items[i] = "empty"
     end
 
@@ -21,9 +21,24 @@ local Inventory = {}
           return true
         end
       end
+      return false
     end
 
-    function inventory:removeQuantity(dataID, quantity)
+    function inventory:put(stack, slot)
+      if not inventory.items[slot] then
+        return false
+      end
+      if inventory.items[slot] == "empty" then
+        inventory.items[slot] = stack
+        return true
+      elseif inventory.items[slot].dataID == stack.dataID then
+        inventory.items[slot].quantity = inventory.items[slot].quantity + stack.quantity 
+        return true
+      end
+      return false
+    end
+
+    function inventory:removeQuantityOf(dataID, quantity)
       local stack = Item:new()
       stack:init(itemType, 0)
       for i, item in pairs(inventory.items) do
@@ -49,21 +64,24 @@ local Inventory = {}
       return false
     end
 
-    function inventory:removeSlot(slot, quantity)
-      if quantity == nil then
-        quantity = 1
+    function inventory:removeQuantityFrom(slot, quantity)
+      if inventory.items[slot] == nil
+      or inventory.items[slot] =="empty"
+      or quantity > inventory.items[slot].quantity
+      then return false end
+      local stack = Item:new(inventory.items[slot].dataID, quantity)
+      inventory.items[slot].quantity = inventory.items[slot].quantity - quantity
+      if inventory.items[slot].quantity == 0 then
+        inventory.items[slot] = "empty"
       end
+      return stack
+    end
+
+    function inventory:removeSlot(slot)
       if inventory.items[slot] ~= "empty" then
         local stack = inventory.items[slot]
-        if stack.quantity < quantity then
-          return nil
-        end
-        if stack.quantity == quantity then
-          inventory.items[slot] = "empty"
-          return stack
-        end
-        stack.quantity = stack.quantity - quantity
-        return Item:new(stack.dataID, quantity)
+        inventory.items[slot] = "empty"
+        return stack
       end
     end
 

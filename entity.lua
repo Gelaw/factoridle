@@ -2,7 +2,7 @@ local Entity = {}
 
   function Entity:new(pos,dim,image)
     local entity = {}
-    entity.image = {}
+    entity.image = nil
     if pos then
       entity.pos = pos
     else
@@ -84,21 +84,25 @@ local Entity = {}
     entity.b = 55 + love.math.random() * 200
 
     function entity:draw(posCam)
-      if entity.ghost then
-        love.graphics.setColor(entity.r,entity.g,entity.b, 100)
-      else
-        love.graphics.setColor(entity.r,entity.g,entity.b)
+      local sx = entity.pos.x - posCam.x + width/2 - entity.dim.width/2
+      local sy = entity.pos.y - posCam.y + height/2 - entity.dim.height/2
+      if entity.image then
+        love.graphics.setColor(255,255,255, (entity.ghost and 100 or 255))
+        love.graphics.draw(self.image, sx, sy, 0, 1, 1)
+        return
       end
-
-        love.graphics.rectangle("fill",
-          entity.pos.x - posCam.x + width/2 - entity.dim.width/2,
-          entity.pos.y - posCam.y + height/2 - entity.dim.height/2,
-          entity.dim.width, entity.dim.height)
+      love.graphics.setColor(entity.r,entity.g,entity.b, (entity.ghost and 100 or 255))
+      love.graphics.rectangle("fill", sx, sy, entity.dim.width, entity.dim.height)
     end
 
-    function entity:drawTo(x, y)
+    function entity:drawTo(sx, sy)
+      if entity.image then
+        love.graphics.setColor(255,255,255)
+        love.graphics.draw(self.image, sx- entity.dim.width/2, sy- entity.dim.height/2, 0, 1, 1)
+        return
+      end
       love.graphics.setColor(entity.r,entity.g,entity.b)
-      love.graphics.rectangle("fill", x- entity.dim.width/2, y- entity.dim.height/2,
+      love.graphics.rectangle("fill", sx - entity.dim.width/2, sy- entity.dim.height/2,
         entity.dim.width, entity.dim.height)
     end
 
