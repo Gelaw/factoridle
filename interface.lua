@@ -14,30 +14,23 @@ function Interface:new()
   interface.listGroup = {}
 
   function interface:init()
-    groupTest = GUI.newGroup("i")
-    panelInventaire = GUI.newPanel("Inventaire",width-300,0,300,200)
-    groupTest:addElement(panelInventaire)
-    panelCaracteristique = GUI.newPanel("Caracteristique",0,0,300,200)
-    groupTest:addElement(panelCaracteristique)
-    textCaracteristique = GUI.newText("textCaracteristique",0,0,300,200,"Caracteristique",love.graphics.getFont(), "center", "center")
-    groupTest:addElement(textCaracteristique)
-    textInventaire = GUI.newText("textInventaire",width-300,0,300,200,"Inventaire",love.graphics.getFont(), "center", "center")
-    groupTest:addElement(textInventaire)
-    button = GUI.newButton("button",width -110,(height /2) -37 ,100,75,"Click",love.graphics.getFont())
-    groupTest:addElement(button)
+    groupTest = GUI.newGroup("i", 100, 100, -1, -1)
+    panelInventaire = GUI.newInventoryPanel("Inventaire",0,0,world.inventory)
+    groupTest.w = panelInventaire.w
+    groupTest.h = panelInventaire.h
+    groupTest:addElement(panelInventaire, "Inventaire")
+    groupTest.visible = true
+    interface:addGroup(groupTest)
 
     panelInventaire:setEvent("hover", onPanelHover)
-    panelCaracteristique:setEvent("hover", onPanelHover)
-    textCaracteristique:setEvent("hover", onPanelHover)
-    textInventaire:setEvent("hover", onPanelHover)
-    button:setEvent("hover", onPanelHover)
-    button:setEvent("pressed", onButtonClicked)
     panelInventaire:setEvent("pressed", onButtonClicked)
-    panelCaracteristique:setEvent("pressed", onButtonClicked)
-    textCaracteristique:setEvent("pressed", onButtonClicked)
-    textInventaire:setEvent("pressed", onButtonClicked)
+  end
 
-    interface:addGroup(groupTest)
+  function interface:doesTouch(x,y)
+    for n,v in pairs(self.listGroup) do
+      if v:doesTouch(x, y) then return true end
+    end
+    return false
   end
 
   function interface:addGroup(group)
@@ -46,59 +39,49 @@ function Interface:new()
 
   function interface:draw()
     for n,v in pairs(self.listGroup) do
-      for i,u in pairs(v.elements) do
-        u:draw()
-      end
+      v:draw()
     end
   end
 
   function interface:update(dt)
     for n,v in pairs(self.listGroup) do
-      for i,u in pairs(v.elements) do
-        u:update(dt)
-      end
+      v:update(dt)
     end
   end
 
   function interface:keypressed(key, scancode, isrepeat)
     if key == "i" then
-      if panelInventaire.visible == true then
-        panelInventaire:setVisible(false)
-        textInventaire:setVisible(false)
+      if groupTest.visible == true then
+        groupTest:setVisible(false)
       else
-        panelInventaire:setVisible(true)
-        textInventaire:setVisible(true)
-      end
-    end
-    if key == "c" then
-      if panelCaracteristique.visible == true then
-        panelCaracteristique:setVisible(false)
-        textCaracteristique:setVisible(false)
-      else
-        panelCaracteristique:setVisible(true)
-        textCaracteristique:setVisible(true)
-      end
-    end
-  end
-  
-  function interface:onClick(button)
-    for n,v in pairs(self.listGroup) do
-      for i,u in pairs(v.elements) do
-        if u.isHover then
-          u:onClick(button)
-        end
+        groupTest:setVisible(true)
       end
     end
   end
 
-  function interface:onRelease(button)
+  function interface:onClick(x, y, button)
     for n,v in pairs(self.listGroup) do
-      for i,u in pairs(v.elements) do
-          u:onRelease(button)
+      if v:doesTouch(x,y) then
+        v:onClick(x, y, button)
+        return
       end
     end
   end
 
+  function interface:onRelease(x, y, button)
+    for n,v in pairs(self.listGroup) do
+      if v:doesTouch(x,y) then
+        v:onRelease(x, y, button)
+        return
+      end
+    end
+  end
+
+  function interface:resetClick()
+    for n,v in pairs(self.listGroup) do
+      v:resetClick()
+    end
+  end
   return interface
 end
 
