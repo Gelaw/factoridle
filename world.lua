@@ -8,8 +8,14 @@ local World = {}
   function World:new()
     local world = {}
     world.entities = {}
-    world.inventory = Inventory:new(20)
+    world.inventory = Inventory:new({width = 5, height = 4})
     world.inventory:add(Item:new(9, 100))
+    world.inventory:add(Item:new(7, 100))
+    world.inventory:add(Item:new(6, 100))
+    world.inventory:add(Item:new(4, 100))
+    world.inventory:add(Item:new(5, 100))
+    world.inventory:add(Item:new(2, 100))
+    world.inventory:add(Item:new(3, 100))
     world.posCam = {x = 0, y = 0}
 
     function world:addEntity(entity)
@@ -30,15 +36,22 @@ local World = {}
       for i, entity in pairs(world.entities) do
         entity:draw(world.posCam)
       end
-      if world.handledEntity ~= nil then
-        world.handledEntity:drawTo(love.mouse.getX(), love.mouse.getY())
-      end
       love.graphics.setColor(255,255,255)
       love.graphics.print(world.inventory:prompt(), 30, height / 2)
       love.graphics.print("cam: x:" ..world.posCam.x.." y:"..world.posCam.y, 30, 30)
       love.graphics.print("mouse: x:" .. love.mouse.getX() - width/2 + world.posCam.x   .. " y:" ..love.mouse.getY() -height/2 + world.posCam.y, 30, 50)
       love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
       love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
+      local x = width - 300
+      local y = height - 500
+      for n, v in pairs(grab) do
+        if (type(v) == "table") then
+          love.graphics.print("grab["..n.."] ", x, y)
+        else
+          love.graphics.print("grab["..n.."] = " .. v, x, y)
+        end
+        y = y + 30
+      end
     end
 
     function world:update(dt)
@@ -80,30 +93,29 @@ local World = {}
       if button == 1 then
         for i, entity in pairs(world.entities) do
           if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
-            if world.handledEntity == nil and entity.movable == true then
-              world.handledEntity = entity
+            if grab.status == nil and entity.movable == true then
+              grab.status = "entity"
+              grab.entity = entity
               entity.ghost = true
               return
             end
           end
         end
       elseif button == 2 then
-        for i, entity in pairs(world.entities) do
-          if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
-            if entity.item then
-              world.inventory:add(entity.item)
-              return
-            end
-          end
-        end
+
       end
     end
 
     function world:mousereleased()
-      if world.handledEntity and world.handledEntity.pos then
-        world.handledEntity:moveTo(love.mouse.getX() - width/2 + world.posCam.x, love.mouse.getY() -height/2 + world.posCam.y )
-        world.handledEntity.ghost = false
-        world.handledEntity = nil
+      if grab.status == "entity" then
+        grab.entity:moveTo(love.mouse.getX() - width/2 + world.posCam.x, love.mouse.getY() -height/2 + world.posCam.y )
+        grab.entity.ghost = false
+        return
+      end
+      if grab.status == "item" and grab.inventory.items[grab.slot].isMachine then
+        local machine = grab.inventory:removeQuantityFrom(grab.slot, 1)
+        machine:dropOnWorld({x =  love.mouse.getX() - width/2 + world.posCam.x, y = love.mouse.getY() -height/2 + world.posCam.y})
+        return
       end
     end
 
@@ -134,6 +146,12 @@ local World = {}
           table.remove(world.entities, e)
           return
         end
+      end
+    end
+
+    function world:resetClick()
+      if grab.status == "entity" then
+        grab.entity.ghost = false
       end
     end
 
