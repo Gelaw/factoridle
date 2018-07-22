@@ -46,7 +46,7 @@ function GUI.newGroup(key, x, y, w, h)
   end
 
   function group:doesTouch(x, y)
-    if x> self.x and y > self.y and x < self.x + self.w and y<self.y + self.h then
+    if x> self.x and y > self.y and x < self.x + self.w and y<self.y + self.h and self.visible then
       return true
     end
     return false
@@ -116,6 +116,7 @@ function GUI.newPanel(name,x,y,w,h)
   panel.listEvents = {}
   panel.color = {r = 255, g = 255, b = 255, a = 255}
   panel.transparent = false
+  panel.mode = "fill"
 
   function panel:addElement(element, id)
     if self.elements[id] == nil then
@@ -191,7 +192,7 @@ function GUI.newPanel(name,x,y,w,h)
 
     if self.image == nil then
       love.graphics.setColor(panel.color.r, panel.color.g, panel.color.b, panel.color.a)
-      love.graphics.rectangle("fill", x, y, w, h)
+      love.graphics.rectangle(self.mode, x, y, w, h)
     else
       love.graphics.setColor(255,255,255)
       love.graphics.draw(self.image, x, y, 0, 1, 1, xoffset, yoffset)
@@ -380,9 +381,11 @@ function GUI.newItemPanel(slot, x, y, item)
     if self.item.dataID then
       self:getElement("itemQuantity"):setText(self.item.quantity)
       self.image = self.item:getImage()
+      self.visible = true
     else
       self:getElement("itemQuantity"):setText("")
       self.image = nil
+      self.visible = false
     end
   end
 
@@ -411,6 +414,11 @@ function GUI.newInventoryPanel(name, x, y, inventory)
         local slot = j * inventory.size.width + i + 1
         local itemPanel =  GUI.newItemPanel(slot,i * 50 + 10, j * 50 + 40, inventory.items[slot])
         inventoryPanel:addElement(itemPanel, slot)
+        local fond = GUI.newPanel("fond"..slot, i * 50 + 10,  j * 50 + 40, 48,48)
+        fond.color = {r = 0, g = 0, b = 0}
+        fond.mode = "line"
+        fond.transparent = true
+        inventoryPanel:addElement(fond, "fond"..slot)
       end
     end
   end

@@ -28,9 +28,9 @@ local World = {}
 
     function world:draw()
       love.graphics.setColor(25, 25, 25)
-      for x = - world.posCam.x%50 - 50 ,  width + 50, 50 do
-        for y = - world.posCam.y%50 - 50,  height + 50, 50 do
-          love.graphics.rectangle("fill", x -24 , y -24 , 48, 48)
+      for x = (width/2)%50- world.posCam.x%50 - 50 ,  width + 50, 50 do
+        for y = (height/2)%50- world.posCam.y%50 - 50,  height + 50, 50 do
+          love.graphics.rectangle("fill", x - 24  , y - 24 , 48, 48)
         end
       end
       for i, entity in pairs(world.entities) do

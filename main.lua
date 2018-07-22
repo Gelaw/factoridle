@@ -10,6 +10,7 @@ local interface
 
 
 function love.load()
+  love.window.setFullscreen( true )
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
   world = World:new()
