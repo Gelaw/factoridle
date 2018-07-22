@@ -450,7 +450,7 @@ function GUI.newInventoryPanel(name, x, y, inventory)
       return
     end
     for n,v in pairs(self.elements) do
-      if grab.inventory ~= inventory and grab.slot ~= n then
+      if grab.inventory ~= inventory or grab.slot ~= n then
         if v:doesTouch(x - self.x, y - self.y) and inventory:put(stack, n) then
           if grab.status == "item" then
             grab.inventory:removeSlot(grab.slot)
