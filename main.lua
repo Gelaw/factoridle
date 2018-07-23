@@ -6,16 +6,14 @@ local Interface = require "interface"
 grab = {}
 grab.status = nil
 
-local interface
-
-
 function love.load()
   love.window.setFullscreen( true )
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
-  world = World:new()
 
-  interface = Interface:new()
+
+  interface = Interface.new()
+  world = World.new()
   interface:init()
 
 end

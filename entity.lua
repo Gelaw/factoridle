@@ -15,6 +15,11 @@ local Entity = {}
     end
     entity.movable = true
     entity.ghost = false
+    entity.name = "allo"
+
+    function entity:getName()
+      return self.name
+    end
 
     function entity:move(dx, dy)
       if entity.movable == false then

@@ -36,6 +36,10 @@ local RessourceGenerator = {}
       ressourceGenerator.isGenerating = false
     end
 
+    function ressourceGenerator:getName()
+      return RessourceGenerator.data[dataID]["name"]
+    end
+
     return ressourceGenerator
   end
 

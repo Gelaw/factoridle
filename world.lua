@@ -5,7 +5,7 @@ local RessourceGenerator = require "ressourceGenerator"
 
 local World = {}
 
-  function World:new()
+  function World.new()
     local world = {}
     world.entities = {}
     world.inventory = Inventory:new({width = 5, height = 4})
@@ -24,6 +24,7 @@ local World = {}
 
     local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
     world:addEntity(forest)
+    interface:addGroupRG(forest)
 
 
     function world:draw()
@@ -102,7 +103,11 @@ local World = {}
           end
         end
       elseif button == 2 then
-
+        for i, entity in pairs(world.entities) do
+          if entity:doesTouch(x - width/2 + world.posCam.x, y - height/2 + world.posCam.y) then
+            interface:toggle(entity:getName())
+          end
+        end
       end
     end
 

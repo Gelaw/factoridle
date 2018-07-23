@@ -243,14 +243,16 @@ function GUI.newPanel(name,x,y,w,h)
     return false
   end
 
-  function panel:onClick(pButton)
-    if self.isHover and self.visible then
-      self.listEvents["pressed"](self)
-      self.isPressed = true
+  function panel:onClick(x, y, pButton)
+    for p, v in pairs(self.elements) do
+      if v:doesTouch(x - self.x, y - self.y) then
+        v:onClick(x - self.x, y - self.y, pButton)
+        return
+      end
     end
   end
 
-  function panel:onRelease(pButton)
+  function panel:onRelease(x, y, pButton)
     for p, v in pairs(self.elements) do
       if v:doesTouch(x - self.x, y - self.y) then
         v:onRelease(x - self.x, y - self.y, pButton)
@@ -306,56 +308,46 @@ end
 
 function GUI.newButton(name,x,y,w,h,pText,font)
   local button = GUI.newPanel(name,x, y, w, h)
+  button.transparent = false
+  button.color = {r = 240, g = 240, b = 240}
   button.Text = pText
-  button.font = font
-  button.label = GUI.newText(name,x, y - h, w, h, pText, font, "center", "center")
-  button.isPressed = false
-  button.oldButtonState = false
+  if font then
+    button.font = font
+  else
+    button.font = love.graphics.getFont()
+  end
+  local label = GUI.newText(name, 0, 0, w, h, pText, font, "center", "center")
+  button:addElement(label, "label")
+  label.transparent = true
 
-  function button:draw(xParent, yParent, wParent, hParent, xoffset, yoffset)
-    local x = x + xParent - xoffset
-    local y = y + yParent - yoffset
-    if self.isPressed then
-      self:drawPanel()
-      love.graphics.setColor(50,50,255,100)
-      love.graphics.rectangle("fill", x, y, self.w, self.h)
-    elseif self.isHover then
-      self:drawPanel()
-      love.graphics.setColor(255,0,255)
-      love.graphics.rectangle("line",x+2, y+2, self.w-4, self.h-4)
-    else
-          self:drawPanel()
-    end
-    love.graphics.setColor(255, 0, 0)
-    self.label.visible = true
-    self.label:draw(xParent, yParent, self.w, self.h)
-    love.graphics.setColor(255, 255, 255)
+  local pressedStatePanel = GUI.newPanel("pressed", w /10, h/10, 8 * w/10, 8* h/10)
+  pressedStatePanel.transparent = true
+  pressedStatePanel.color = {r = 0, g = 0, b = 0}
+  pressedStatePanel.visible = false
+  pressedStatePanel.mode = "line"
+  button:addElement(pressedStatePanel, "pressedStatePanel")
+
+  button.actionPerformed = nil
+
+  function button:onClick(x, y , pButton)
+    pressedStatePanel.visible = true
+    grab.status = "UI"
+    grab.ui = self
   end
 
-  function button:onClick(pButton)
-    if self.isHover and pButton == 1 and
-        self.isPressed == false and
-        self.oldButtonState == false then
-      self.isPressed = true
-      if self.listEvents["pressed"] ~= nil then
-        self.listEvents["pressed"](self)
-      end
+  function button:onRelease(x, y, pButton)
+   if pressedStatePanel.visible then
+    pressedStatePanel.visible = false
+    if self.actionPerformed then
+      self.actionPerformed()
     end
-    self.oldButtonState = true
+   end
   end
 
-  function button:onRelease(pButton)
-    if self.isPressed == true and pButton == 1 then
-      self.isPressed = false
+  function button:resetClick()
+    if pressedStatePanel.visible then
+      pressedStatePanel.visible = false
     end
-    if self.isHover == false then
-      self.isPressed = false
-    end
-    self.oldButtonState = false
-  end
-
-  function button:update(dt)
-    self:updatePanel()
   end
 
   return button
@@ -400,21 +392,17 @@ function GUI.newItemPanel(slot, x, y, item)
 end
 
 function GUI.newInventoryPanel(name, x, y, inventory)
-  local inventoryPanel =  GUI.newPanel(name, x, y, inventory.size.width * 50 + 20, inventory.size.height * 50 + 50)
+  local inventoryPanel =  GUI.newPanel(name, x, y, inventory.size.width * 50 + 10, inventory.size.height * 50 + 10)
 
   function inventoryPanel:init()
     inventoryPanel.transparent = true
     inventoryPanel.color = {r = 255, g = 255, b = 255, a = 255}
-    local pane = GUI.newText("textInventoryPanel", 0, 0, inventoryPanel.w, 40, "Inventaire", love.graphics.getFont(), "center", "center")
-    inventoryPanel:addElement(pane,"textInventoryPanel")
-    pane.color = {r = 255, g = 0, b = 0}
-    pane.transparent = true
     for j = 0, inventory.size.height - 1, 1 do
       for i = 0, inventory.size.width - 1, 1 do
         local slot = j * inventory.size.width + i + 1
-        local itemPanel =  GUI.newItemPanel(slot,i * 50 + 10, j * 50 + 40, inventory.items[slot])
+        local itemPanel =  GUI.newItemPanel(slot,i * 50 + 5, j * 50 + 5, inventory.items[slot])
         inventoryPanel:addElement(itemPanel, slot)
-        local fond = GUI.newPanel("fond"..slot, i * 50 + 10,  j * 50 + 40, 48,48)
+        local fond = GUI.newPanel("fond"..slot, i * 50 + 5,  j * 50 + 5, 48,48)
         fond.color = {r = 0, g = 0, b = 0}
         fond.mode = "line"
         fond.transparent = true
@@ -434,12 +422,17 @@ function GUI.newInventoryPanel(name, x, y, inventory)
 
   function inventoryPanel:onClick(x, y, pButton)
     for n,v in pairs(self.elements) do
-      if v:doesTouch(x - self.x, y - self.y) and inventory.items[n] and inventory.items[n]~="empty" then
-        v:onClick(x, y, button)
-        grab.status = "item"
-        grab.item = inventory.items[n]
-        grab.inventory = inventory
-        grab.slot = n
+      if v:doesTouch(x - self.x, y - self.y) then
+        if inventory.items[n] and inventory.items[n]~="empty" then
+          v:onClick(x, y, button)
+          grab.status = "item"
+          grab.item = inventory.items[n]
+          grab.inventory = inventory
+          grab.slot = n
+        else
+          grab.status = "UI"
+          grab.ui = self
+        end
       end
     end
   end
@@ -471,7 +464,31 @@ function GUI.newInventoryPanel(name, x, y, inventory)
     end
   end
 
+  function inventoryPanel:update()
+    self:refresh()
+  end
+
   inventoryPanel:init()
   return inventoryPanel
 end
+
+function GUI.newRessourceGeneratorPanel(ressourceGenerator, x, y)
+  local rgi = GUI.newPanel(ressourceGenerator:getName(), x, y, 400, 300)
+
+  function rgi:init()
+    self.transparent = true
+    rgi:addElement(GUI.newInventoryPanel("toolslot", 30, 50, ressourceGenerator.toolSlot), "toolSlot")
+    rgi:addElement(GUI.newInventoryPanel("inventory", 100, 50, ressourceGenerator.inventory), "inventory")
+    local button = GUI.newButton("RG", 30, 200, 50, 50, " ", love.graphics.getFont())
+    rgi:addElement(button, "button")
+    button.color = {r = 30, g = 150, b = 30}
+    button.actionPerformed = function()
+      ressourceGenerator:initGeneration()
+    end
+  end
+
+  rgi:init()
+  return rgi
+end
+
 return GUI

@@ -1,6 +1,6 @@
 local GUI = require "GUI"
 
-local groupTest
+local Inventaire
 local panelInventaire
 local panelCaracteristique
 local textCaracteristique
@@ -9,21 +9,18 @@ local button
 
 local Interface = {}
 
-function Interface:new()
+function Interface.new()
   local interface = {}
   interface.listGroup = {}
 
   function interface:init()
-    groupTest = GUI.newGroup("i", 100, 100, -1, -1)
+    Inventaire = GUI.newGroup("i", 100, 100, -1, -1)
     panelInventaire = GUI.newInventoryPanel("Inventaire",0,0,world.inventory)
-    groupTest.w = panelInventaire.w
-    groupTest.h = panelInventaire.h
-    groupTest:addElement(panelInventaire, "Inventaire")
-    groupTest.visible = true
-    interface:addGroup(groupTest)
-
-    panelInventaire:setEvent("hover", onPanelHover)
-    panelInventaire:setEvent("pressed", onButtonClicked)
+    Inventaire.w = panelInventaire.w
+    Inventaire.h = panelInventaire.h
+    Inventaire:addElement(panelInventaire, "Inventaire")
+    Inventaire.visible = false
+    interface:addGroup(Inventaire, "Inventaire")
   end
 
   function interface:doesTouch(x,y)
@@ -33,8 +30,34 @@ function Interface:new()
     return false
   end
 
-  function interface:addGroup(group)
-    table.insert(self.listGroup, group)
+  function interface:addGroup(group, name)
+    if self.listGroup then
+      if self.listGroup[name] == nil then
+        self.listGroup[name] = group
+        return true
+      end
+    end
+    return false
+  end
+
+  function interface:getGroup(name)
+    return self.listGroup[name]
+  end
+
+  function interface:toggle(name)
+    if self:getGroup(name) then
+      self:getGroup(name).visible = not self:getGroup(name).visible
+    end
+  end
+
+  function interface:addGroupRG(ressourceGenerator)
+    RG = GUI.newGroup(ressourceGenerator:getName(), 100, 100, -1, -1)
+    PRG = GUI.newRessourceGeneratorPanel(ressourceGenerator,0,0,ressourceGenerator)
+    RG.w = PRG.w
+    RG.h = PRG.h
+    RG:addElement(PRG, ressourceGenerator:getName())
+    RG.visible = false
+    interface:addGroup(RG, ressourceGenerator:getName())
   end
 
   function interface:draw()
@@ -51,10 +74,10 @@ function Interface:new()
 
   function interface:keypressed(key, scancode, isrepeat)
     if key == "i" then
-      if groupTest.visible == true then
-        groupTest:setVisible(false)
+      if Inventaire.visible == true then
+        Inventaire:setVisible(false)
       else
-        groupTest:setVisible(true)
+        Inventaire:setVisible(true)
       end
     end
   end
