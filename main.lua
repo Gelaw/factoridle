@@ -30,14 +30,14 @@ end
 
   function love.draw()
     if gameScreen == "menu" then
-      love.graphics.draw(titleScreen, 0, -10, 0, 1.8, 1.7)
+      love.graphics.draw(titleScreen, 0, -10, 0, width/768, height/ 481)
       if cursorIsVisible then
         if cursorPosition == "play" then
-          love.graphics.draw(titleCursor, width/2 - 200, height/3 + 20, 0, 1.5, 1.5)
+          love.graphics.draw(titleCursor,  width * 244/768, height * 165 / 481, 0, 1.5, 1.5)
         elseif cursorPosition == "howTo" then
-          love.graphics.draw(titleCursor, width/2 - 200, height/2 + 60, 0, 1.5, 1.5)
+          love.graphics.draw(titleCursor,  width * 244/768, height * 265 / 481, 0, 1.5, 1.5)
         elseif cursorPosition == "credits" then
-          love.graphics.draw(titleCursor, width/2 - 200, height -150, 0, 1.5, 1.5)
+          love.graphics.draw(titleCursor,  width * 244/768, height * 368 / 481, 0, 1.5, 1.5)
         end
       end
       return
