@@ -2,12 +2,13 @@
 local GUI = require "GUI"
 local World = require "world"
 local Interface = require "interface"
+Inventory = require "inventory"
 
 grab = {}
 grab.status = nil
 
 function love.load()
-  love.window.setFullscreen( true )
+  love.window.setFullscreen(true)
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
 

@@ -52,12 +52,22 @@ function Interface.new()
 
   function interface:addGroupRG(ressourceGenerator)
     RG = GUI.newGroup(ressourceGenerator:getName(), 100, 100, -1, -1)
-    PRG = GUI.newRessourceGeneratorPanel(ressourceGenerator,0,0,ressourceGenerator)
+    PRG = GUI.newRessourceGeneratorPanel(ressourceGenerator,0,0)
     RG.w = PRG.w
     RG.h = PRG.h
     RG:addElement(PRG, ressourceGenerator:getName())
     RG.visible = false
     interface:addGroup(RG, ressourceGenerator:getName())
+  end
+
+  function interface:addGroupMachine(machine)
+    M = GUI.newGroup(machine:getName(), 100, 100, -1, -1)
+    PM = GUI.newMachinePanel(machine,0,0)
+    M.w = PM.w
+    M.h = PM.h
+    M:addElement(PM, machine:getName())
+    M.visible = false
+    interface:addGroup(M, machine:getName())
   end
 
   function interface:draw()

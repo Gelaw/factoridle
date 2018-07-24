@@ -1,4 +1,3 @@
-local Entity = require "entity"
 local Item = {}
 
 function Item:new(dataID, quantity)
@@ -34,23 +33,6 @@ function Item:new(dataID, quantity)
     if image then
       love.graphics.setColor(255, 255, 255)
       love.graphics.draw(image, sx - 25, sy - 25)
-    end
-  end
-
-  function item:dropOnWorld(pos)
-    if item.isMachine and item.entity == nil then
-      item.entity = Entity:newMachine(pos)
-      item.entity.item = item
-      item.entity.image = item:getImage()
-      world:addEntity(item.entity)
-    end
-    return item.entity
-  end
-
-  function item:dragOnInventory()
-    if item.isMachine and item.entity then
-      world:removeEntity(item.entity)
-      item.entity = nil
     end
   end
 

@@ -15,10 +15,14 @@ local Entity = {}
     end
     entity.movable = true
     entity.ghost = false
-    entity.name = "allo"
+    entity.name = "defaultname"
 
     function entity:getName()
       return self.name
+    end
+
+    function entity:getImage()
+      return self.image
     end
 
     function entity:move(dx, dy)
@@ -84,29 +88,27 @@ local Entity = {}
       return false
     end
 
-    entity.r = 55 + love.math.random() * 200
-    entity.g = 55 + love.math.random() * 200
-    entity.b = 55 + love.math.random() * 200
+    entity.color = {r = 55 + love.math.random() * 200, g = 55 + love.math.random() * 200, b = 55 + love.math.random() * 200}
 
     function entity:draw(posCam)
       local sx = entity.pos.x - posCam.x + width/2 - entity.dim.width/2
       local sy = entity.pos.y - posCam.y + height/2 - entity.dim.height/2
       if entity.image then
         love.graphics.setColor(255,255,255, (entity.ghost and 100 or 255))
-        love.graphics.draw(self.image, sx, sy, 0, 1, 1)
+        love.graphics.draw(self:getImage(), sx, sy, 0, 1, 1)
         return
       end
-      love.graphics.setColor(entity.r,entity.g,entity.b, (entity.ghost and 100 or 255))
+      love.graphics.setColor(entity.color.r,entity.color.g,entity.color.b, (entity.ghost and 100 or 255))
       love.graphics.rectangle("fill", sx, sy, entity.dim.width, entity.dim.height)
     end
 
     function entity:drawTo(sx, sy)
       if entity.image then
         love.graphics.setColor(255,255,255)
-        love.graphics.draw(self.image, sx- entity.dim.width/2, sy- entity.dim.height/2, 0, 1, 1)
+        love.graphics.draw(self:getImage(), sx- entity.dim.width/2, sy- entity.dim.height/2, 0, 1, 1)
         return
       end
-      love.graphics.setColor(entity.r,entity.g,entity.b)
+      love.graphics.setColor(entity.color.r,entity.color.g,entity.color.b)
       love.graphics.rectangle("fill", sx - entity.dim.width/2, sy- entity.dim.height/2,
         entity.dim.width, entity.dim.height)
     end
@@ -115,10 +117,22 @@ local Entity = {}
   end
 
 
+  local machineinc = 0
 
-  function Entity:newMachine(pos, machineID)
-    local entity = Entity:new(pos)
-      entity:moveTo(pos.x, pos.y)
-    return entity
+  function Entity.newMachine(pos, item)
+    local machine = Entity:new(pos)
+    function machine:init()
+      machine:moveTo(pos.x, pos.y) -- Pour se placer a un endroit libre
+      machine.name = "machine"..machineinc
+      machine.item = item
+      machineinc = machineinc + 1
+      machine.inputs = Inventory.new({width = 1, height = 4})
+      machine.outputs = Inventory.new({width = 1, height = 4})
+      machine.image = item:getImage()
+    end
+
+
+    machine:init()
+    return machine
   end
 return Entity

@@ -456,7 +456,7 @@ function GUI.newInventoryPanel(name, x, y, inventory)
           if grab.status == "item" then
             grab.inventory:removeSlot(grab.slot)
           elseif grab.status == "entity" and grab.entity.item then
-            stack:dragOnInventory()
+            world:removeEntity(grab.entity)
           end
           self:refresh()
         end
@@ -491,4 +491,16 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, x, y)
   return rgi
 end
 
+function GUI.newMachinePanel(machine, x, y)
+  local mi = GUI.newPanel(machine:getName(), x, y, 400, 300)
+
+  function mi:init()
+    self.transparent = true
+    mi:addElement(GUI.newInventoryPanel("input", 30, 50, machine.inputs), "input")
+    mi:addElement(GUI.newInventoryPanel("output", 100, 50, machine.outputs), "output")
+  end
+
+  mi:init()
+  return mi
+end
 return GUI
