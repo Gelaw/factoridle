@@ -70,7 +70,7 @@ end
 
   function love.mousemoved(x, y, dx, dy)
     if gameScreen == "menu" then
-      if x > width/2 - 200 and x < 1000 then
+      if x > width/2 - 200 and x < width/2 + 120 then
         if y > height/3 + 20 and y < height/3 + 120 then
           cursorPosition = "play"
         elseif y > height/2 + 60 and y < height/2 + 160 then
