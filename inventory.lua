@@ -1,9 +1,10 @@
 local Item = require "item"
 local Inventory = {}
 
-  function Inventory:new(size)
+  function Inventory.new(size)
     local inventory = {}
     inventory.size = size
+    inventory.filters = {}
     inventory.items = {}
     for i = 1, size.width * size.height, 1 do
       inventory.items[i] = "empty"
@@ -13,11 +14,9 @@ local Inventory = {}
       for i, item in pairs(inventory.items) do
         if item ~= "empty" and item.dataID == stack.dataID then
           item.quantity = item.quantity + stack.quantity
-          stack:dragOnInventory()
           return true
         elseif item == "empty" then
           inventory.items[i] = stack
-          stack:dragOnInventory()
           return true
         end
       end
@@ -32,7 +31,7 @@ local Inventory = {}
         inventory.items[slot] = stack
         return true
       elseif inventory.items[slot].dataID == stack.dataID then
-        inventory.items[slot].quantity = inventory.items[slot].quantity + stack.quantity 
+        inventory.items[slot].quantity = inventory.items[slot].quantity + stack.quantity
         return true
       end
       return false
@@ -66,7 +65,7 @@ local Inventory = {}
 
     function inventory:removeQuantityFrom(slot, quantity)
       if inventory.items[slot] == nil
-      or inventory.items[slot] =="empty"
+      or inventory.items[slot] == "empty"
       or quantity > inventory.items[slot].quantity
       then return false end
       local stack = Item:new(inventory.items[slot].dataID, quantity)
@@ -96,24 +95,6 @@ local Inventory = {}
          end
       end
       return string
-    end
-
-    function inventory:dragItemOnSlot(item, slot)
-      if not inventory.items[slot] then
-      elseif inventory.items[slot] == "empty" then
-        item:dragOnInventory()
-        inventory.items[slot] = item
-      elseif inventory.items[slot].type == item.type then
-        inventory.items[slot].quantity = inventory.items[slot].quantity + item.quantity
-      end
-    end
-
-    function inventory:dragItemOnWorld(slot, pos)
-      if not inventory.items[slot] then
-      elseif inventory.items[slot].isMachine == true then
-       local item = inventory:removeSlot(slot)
-       item:dropOnWorld(pos)
-      end
     end
 
     return inventory

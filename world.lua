@@ -8,7 +8,7 @@ local World = {}
   function World.new()
     local world = {}
     world.entities = {}
-    world.inventory = Inventory:new({width = 5, height = 4})
+    world.inventory = Inventory.new({width = 5, height = 4})
     world.inventory:add(Item:new(9, 100))
     world.inventory:add(Item:new(7, 100))
     world.inventory:add(Item:new(6, 100))
@@ -46,12 +46,23 @@ local World = {}
       local x = width - 300
       local y = height - 500
       for n, v in pairs(grab) do
-        if (type(v) == "table") then
-          love.graphics.print("grab["..n.."] ", x, y)
+        if type(v) == "table" then
+          for n2, v2 in pairs(v) do
+            if type(v2) == "string" or type(v2) == "number" then
+              love.graphics.print("grab["..n.."]["..n2.."] = "..v2, x, y)
+              y = y + 15
+            elseif type(v2) == "boolean" then
+              love.graphics.print("grab["..n.."]["..n2.."] = "..(v2 and "true" or "false"), x, y)
+              y = y + 15
+            elseif type(v2) ~= "function" then
+              love.graphics.print("grab["..n.."]["..n2.."]", x, y)
+              y = y + 15
+            end
+          end
         else
           love.graphics.print("grab["..n.."] = " .. v, x, y)
         end
-        y = y + 30
+        y = y + 15
       end
     end
 
@@ -111,15 +122,17 @@ local World = {}
       end
     end
 
-    function world:mousereleased()
+    function world:mousereleased(x, y, button, isTouch)
       if grab.status == "entity" then
         grab.entity:moveTo(love.mouse.getX() - width/2 + world.posCam.x, love.mouse.getY() -height/2 + world.posCam.y )
         grab.entity.ghost = false
         return
       end
-      if grab.status == "item" and grab.inventory.items[grab.slot].isMachine then
-        local machine = grab.inventory:removeQuantityFrom(grab.slot, 1)
-        machine:dropOnWorld({x =  love.mouse.getX() - width/2 + world.posCam.x, y = love.mouse.getY() -height/2 + world.posCam.y})
+      if grab.status == "item" and grab.item.isMachine then
+        local item = grab.inventory:removeQuantityFrom(grab.slot, 1)
+        local machine = Entity.newMachine({x =  x - width/2 + world.posCam.x, y = y -height/2 + world.posCam.y}, item)
+        self:addEntity(machine)
+        interface:addGroupMachine(machine)
         return
       end
     end
