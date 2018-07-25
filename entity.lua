@@ -16,6 +16,7 @@ local Entity = {}
     entity.movable = true
     entity.ghost = false
     entity.name = "defaultname"
+    entity.inventories = {}
 
     function entity:getName()
       return self.name
@@ -113,6 +114,24 @@ local Entity = {}
         entity.dim.width, entity.dim.height)
     end
 
+    function entity:doesntHave(inventory)
+      for n, v in pairs(self.inventories) do
+        if v == inventory then
+          return false
+        end
+      end
+      return true
+    end
+
+    function entity:isEmpty()
+      for n, v in pairs(self.inventories) do
+        if not v:isEmpty() then
+          return false
+        end
+      end
+      return true
+    end
+
     return entity
   end
 
@@ -126,11 +145,10 @@ local Entity = {}
       machine.name = "machine"..machineinc
       machine.item = item
       machineinc = machineinc + 1
-      machine.inputs = Inventory.new({width = 1, height = 4})
-      machine.outputs = Inventory.new({width = 1, height = 4})
+      machine.inventories.inputs = Inventory.new({width = 1, height = 4})
+      machine.inventories.outputs = Inventory.new({width = 1, height = 4})
       machine.image = item:getImage()
     end
-
 
     machine:init()
     return machine

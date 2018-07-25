@@ -452,13 +452,12 @@ function GUI.newInventoryPanel(name, x, y, inventory)
     end
     for n,v in pairs(self.elements) do
       if grab.inventory ~= inventory or grab.slot ~= n then
-        if v:doesTouch(x - self.x, y - self.y) and inventory:put(stack, n) then
-          if grab.status == "item" then
+        if v:doesTouch(x - self.x, y - self.y) then
+          if grab.status == "item" and inventory:put(stack, n) then
             grab.inventory:removeSlot(grab.slot)
-          elseif grab.status == "entity" and grab.entity.item then
+          elseif grab.status == "entity" and grab.entity.item and grab.entity:doesntHave(inventory) and grab.entity:isEmpty() and inventory:put(stack, n)then
             world:removeEntity(grab.entity)
           end
-          self:refresh()
         end
       end
     end
@@ -496,8 +495,8 @@ function GUI.newMachinePanel(machine, x, y)
 
   function mi:init()
     self.transparent = true
-    mi:addElement(GUI.newInventoryPanel("input", 30, 50, machine.inputs), "input")
-    mi:addElement(GUI.newInventoryPanel("output", 100, 50, machine.outputs), "output")
+    mi:addElement(GUI.newInventoryPanel("input", 30, 50, machine.inventories.inputs), "input")
+    mi:addElement(GUI.newInventoryPanel("output", 100, 50, machine.inventories.outputs), "output")
   end
 
   mi:init()

@@ -70,8 +70,12 @@ function Interface.new()
     interface:addGroup(M, machine:getName())
   end
 
+  function interface:removeGroup(groupname)
+    self.listGroup[groupname] = nil
+  end
+
   function interface:draw()
-    for n,v in pairs(self.listGroup) do
+    for n, v in pairs(self.listGroup) do
       v:draw()
     end
   end

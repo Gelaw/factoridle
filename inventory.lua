@@ -84,6 +84,15 @@ local Inventory = {}
       end
     end
 
+    function inventory:isEmpty()
+      for i, slot in pairs(self.items) do
+        if slot ~= "empty" then
+          return false
+        end
+      end
+      return true
+    end
+
     function inventory:prompt()
       local string = "inventory:"
       for i, item in pairs(inventory.items) do

@@ -162,6 +162,7 @@ local World = {}
       for e, ent in pairs(world.entities) do
         if entity == ent then
           table.remove(world.entities, e)
+          interface:removeGroup(entity:getName())
           return
         end
       end
