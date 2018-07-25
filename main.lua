@@ -2,7 +2,6 @@
 local GUI = require "GUI"
 local World = require "world"
 local Interface = require "interface"
-Inventory = require "inventory"
 
 --image
 local titleScreen = love.graphics.newImage("sprite/titleScreen.png")

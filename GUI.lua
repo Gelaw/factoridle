@@ -370,7 +370,7 @@ function GUI.newItemPanel(slot, x, y, item)
   itemPanel:addElement(textPane, "itemQuantity")
 
   function itemPanel:update()
-    if self.item.dataID then
+    if self.item.dataID and self.item.quantity then
       self:getElement("itemQuantity"):setText(self.item.quantity)
       self.image = self.item:getImage()
       self.visible = true
@@ -438,7 +438,7 @@ function GUI.newInventoryPanel(name, x, y, inventory)
   end
 
   function inventoryPanel:onRelease(x, y, pButton)
-    if not grab then
+    if not grab or inventory.canPlayerAdd == false then
       return
     end
     local stack = nil
@@ -476,8 +476,8 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, x, y)
 
   function rgi:init()
     self.transparent = true
-    rgi:addElement(GUI.newInventoryPanel("toolslot", 30, 50, ressourceGenerator.toolSlot), "toolSlot")
-    rgi:addElement(GUI.newInventoryPanel("inventory", 100, 50, ressourceGenerator.inventory), "inventory")
+    rgi:addElement(GUI.newInventoryPanel("toolslot", 30, 50, ressourceGenerator.inventories.toolSlot), "toolSlot")
+    rgi:addElement(GUI.newInventoryPanel("inventory", 100, 50, ressourceGenerator.inventories.inventory), "inventory")
     local button = GUI.newButton("RG", 30, 200, 50, 50, " ", love.graphics.getFont())
     rgi:addElement(button, "button")
     button.color = {r = 30, g = 150, b = 30}

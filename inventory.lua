@@ -5,6 +5,7 @@ local Inventory = {}
     local inventory = {}
     inventory.size = size
     inventory.filters = {}
+    inventory.canPlayerAdd = true
     inventory.items = {}
     for i = 1, size.width * size.height, 1 do
       inventory.items[i] = "empty"
@@ -38,8 +39,7 @@ local Inventory = {}
     end
 
     function inventory:removeQuantityOf(dataID, quantity)
-      local stack = Item:new()
-      stack:init(itemType, 0)
+      local stack = Item.new(dataID, 0)
       for i, item in pairs(inventory.items) do
         if item.dataID == stack.dataID then
           if item.quantity >= quantity then
@@ -52,12 +52,12 @@ local Inventory = {}
             return stack
           else
             quantity = quantity - item.quantity
-            stack.quantity = item.quantity
+            stack.quantity = stack.quantity + item.quantity
             inventory.items[i] = "empty"
           end
         end
       end
-      if stack.quantity > 0 then
+      if quantity > 0 then
         inventory:add(stack)
       end
       return false
@@ -68,7 +68,7 @@ local Inventory = {}
       or inventory.items[slot] == "empty"
       or quantity > inventory.items[slot].quantity
       then return false end
-      local stack = Item:new(inventory.items[slot].dataID, quantity)
+      local stack = Item.new(inventory.items[slot].dataID, quantity)
       inventory.items[slot].quantity = inventory.items[slot].quantity - quantity
       if inventory.items[slot].quantity == 0 then
         inventory.items[slot] = "empty"
@@ -104,6 +104,21 @@ local Inventory = {}
          end
       end
       return string
+    end
+
+    function inventory:doesContain(dataID, quantity)
+      for i, item in pairs(self.items) do
+        if item.dataID then
+          if item.dataID == dataID then
+            if quantity < item.quantity then
+              return true
+            else
+              quantity = quantity - item.quantity
+            end
+          end
+        end
+      end
+      return false
     end
 
     return inventory

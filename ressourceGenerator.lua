@@ -8,8 +8,9 @@ local RessourceGenerator = {}
     local ressourceGenerator = Entity:new(pos, {width = RessourceGenerator.data[dataID]["width"], height = RessourceGenerator.data[dataID]["height"]})
     ressourceGenerator.movable = false
 
-    ressourceGenerator.toolSlot = Inventory.new({width = 1, height = 1})
-    ressourceGenerator.inventory = Inventory.new({width = 5, height = 4})
+    ressourceGenerator.inventories.toolSlot = Inventory.new({width = 1, height = 1})
+    ressourceGenerator.inventories.inventory = Inventory.new({width = 5, height = 4})
+    ressourceGenerator.inventories.inventory.canPlayerAdd = false
     ressourceGenerator.isGenerating = false
     ressourceGenerator.timer = 0
 
@@ -32,7 +33,7 @@ local RessourceGenerator = {}
     end
 
     function ressourceGenerator:generate()
-      ressourceGenerator.inventory:add(Item:new(RessourceGenerator.data[dataID]["generatedID"], 1))
+      ressourceGenerator.inventories.inventory:add(Item.new(RessourceGenerator.data[dataID]["generatedID"], 1))
       ressourceGenerator.isGenerating = false
     end
 

@@ -1,6 +1,6 @@
 local Item = {}
 
-function Item:new(dataID, quantity)
+function Item.new(dataID, quantity)
   local item = {}
   item.dataID = dataID
   item.quantity = quantity

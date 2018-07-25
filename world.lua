@@ -9,13 +9,11 @@ local World = {}
     local world = {}
     world.entities = {}
     world.inventory = Inventory.new({width = 5, height = 4})
-    world.inventory:add(Item:new(9, 100))
-    world.inventory:add(Item:new(7, 100))
-    world.inventory:add(Item:new(6, 100))
-    world.inventory:add(Item:new(4, 100))
-    world.inventory:add(Item:new(5, 100))
-    world.inventory:add(Item:new(2, 100))
-    world.inventory:add(Item:new(3, 100))
+    world.inventory:add(Item.new(9, 100))
+    world.inventory:add(Item.new(4, 100))
+    world.inventory:add(Item.new(5, 100))
+    world.inventory:add(Item.new(2, 100))
+    world.inventory:add(Item.new(3, 100))
     world.posCam = {x = 0, y = 0}
 
     function world:addEntity(entity)
@@ -67,7 +65,11 @@ local World = {}
     end
 
     function world:update(dt)
-      forest:update(dt)
+      for e, entity in pairs(self.entities) do
+        if entity.update then
+          entity:update(dt)
+        end
+      end
     end
 
     function world:initTreeGeneration()

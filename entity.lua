@@ -1,3 +1,6 @@
+local Inventory = require "inventory"
+local Item = require "item"
+local Recipe = require "recipe"
 local Entity = {}
 
   function Entity:new(pos,dim,image)
@@ -147,7 +150,43 @@ local Entity = {}
       machineinc = machineinc + 1
       machine.inventories.inputs = Inventory.new({width = 1, height = 4})
       machine.inventories.outputs = Inventory.new({width = 1, height = 4})
+      machine.inventories.outputs.canPlayerAdd = false
       machine.image = item:getImage()
+      machine.isCrafting = false
+    end
+
+    function machine:update(dt)
+      if self.isCrafting == false then
+        local recipes = Recipe.getRecipes(item:getSubtype())
+        for r, recipe in pairs(recipes) do
+          local ok = true
+          for i, intrant in pairs(recipe.intrants) do
+            if not machine.inventories.inputs:doesContain(intrant.itemID, intrant.quantity) then
+              ok = false
+            end
+          end
+          if ok then
+            for i, intrant in pairs(recipe.intrants) do
+              machine.inventories.inputs:removeQuantityOf(intrant.itemID, intrant.quantity)
+            end
+            self.isCrafting = true
+            self.timer = recipe.time
+            self.extrants = recipe.extrants
+            return
+          end
+        end
+      else
+        self.timer = self.timer - dt
+        if self.timer <= 0 then
+          self.isCrafting = false
+          self.timer = nil
+          for i, extrant in pairs(self.extrants) do
+            print(extrant.itemID, extrant.quantity)
+            machine.inventories.outputs:add(Item.new(extrant.itemID, extrant.quantity))
+          end
+          self.extrants = nil
+        end
+      end
     end
 
     machine:init()
