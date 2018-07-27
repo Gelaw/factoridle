@@ -54,8 +54,7 @@ function Interface.new()
   end
 
   function interface:addGroupMachine(machine)
-
-    PM = GUI.newMachinePanel(machine,0,50)
+    PM = GUI.newMachinePanel(machine,0,0)
     M = GUI.newGroup(machine:getName(), 100, 100, PM.w,PM.h + 50)
     M:addElement(PM, machine:getName())
     M.visible = false

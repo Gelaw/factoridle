@@ -643,7 +643,7 @@ function GUI.newPlayerGroup(player)
     self.elements["quit"] = nil
   end
 
-  local speed = 250
+  local speed = 500
 
   function playerGroup:update(dt)
     for n,v in pairs(self.elements) do
@@ -697,11 +697,14 @@ function GUI.newPlayerGroup(player)
     local px = self.x + dx
     if px < width and px > width - largeur then
       self.x = px
-      if dx < 0 then
-        self:show()
-      else
-        self:hide()
-      end
+    end
+  end
+
+  function playerGroup:onRelease(x, y)
+    if self.x < width - largeur + largeur / 2 then
+      self:show()
+    elseif self.x > width - largeur / 2 then
+      self:hide()
     end
   end
 
