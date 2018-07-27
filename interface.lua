@@ -14,12 +14,7 @@ function Interface.new()
   interface.listGroup = {}
 
   function interface:init()
-    Inventaire = GUI.newGroup("i", 100, 100, -1, -1)
-    panelInventaire = GUI.newInventoryPanel("Inventaire",0,0,world.inventory)
-    Inventaire.w = panelInventaire.w
-    Inventaire.h = panelInventaire.h
-    Inventaire:addElement(panelInventaire, "Inventaire")
-    Inventaire.visible = false
+    Inventaire = GUI.newPlayerGroup(world.player)
     interface:addGroup(Inventaire, "Inventaire")
   end
 
@@ -51,20 +46,17 @@ function Interface.new()
   end
 
   function interface:addGroupRG(ressourceGenerator)
-    RG = GUI.newGroup(ressourceGenerator:getName(), 100, 100, -1, -1)
     PRG = GUI.newRessourceGeneratorPanel(ressourceGenerator,0,0)
-    RG.w = PRG.w
-    RG.h = PRG.h
+    RG = GUI.newGroup(ressourceGenerator:getName(), 100, 100, PRG.w,  PRG.h + 50)
     RG:addElement(PRG, ressourceGenerator:getName())
     RG.visible = false
     interface:addGroup(RG, ressourceGenerator:getName())
   end
 
   function interface:addGroupMachine(machine)
-    M = GUI.newGroup(machine:getName(), 100, 100, -1, -1)
-    PM = GUI.newMachinePanel(machine,0,0)
-    M.w = PM.w
-    M.h = PM.h
+
+    PM = GUI.newMachinePanel(machine,0,50)
+    M = GUI.newGroup(machine:getName(), 100, 100, PM.w,PM.h + 50)
     M:addElement(PM, machine:getName())
     M.visible = false
     interface:addGroup(M, machine:getName())
@@ -88,11 +80,7 @@ function Interface.new()
 
   function interface:keypressed(key, scancode, isrepeat)
     if key == "i" then
-      if Inventaire.visible == true then
-        Inventaire:setVisible(false)
-      else
-        Inventaire:setVisible(true)
-      end
+      Inventaire:toggle()
     end
   end
 

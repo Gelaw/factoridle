@@ -49,6 +49,10 @@ RessourceGenerator.data = {{id = 1, name = "default", toolTypeID = 1, generatedI
                           {id = 2, name = "forest", toolTypeID = 2, generatedID = 2,
                               width = 50, height = 50},
                           {id = 3, name = "quarry", toolTypeID = 3, generatedID = 3,
+                              width = 50, height = 50},
+                          {id = 4, name = "ironmine", toolTypeID = 3, generatedID = 4,
+                              width = 50, height = 50},
+                          {id = 5, name = "coppermine", toolTypeID = 3, generatedID = 5,
                               width = 50, height = 50}}
 
 return RessourceGenerator

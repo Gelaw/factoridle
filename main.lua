@@ -11,7 +11,7 @@ grab = {}
 grab.status = nil
 
 --Current gameScreen
-local gameScreen = "menu"
+local gameScreen = "game"
 local cursorPosition = "credits"
 local cursorIsVisible = true
 local timer = 0

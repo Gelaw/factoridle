@@ -143,16 +143,17 @@ local Entity = {}
 
   function Entity.newMachine(pos, item)
     local machine = Entity:new(pos)
+
     function machine:init()
-      machine:moveTo(pos.x, pos.y) -- Pour se placer a un endroit libre
-      machine.name = "machine"..machineinc
-      machine.item = item
+      self:moveTo(pos.x, pos.y) -- Pour se placer a un endroit libre
+      self.name = "machine"..machineinc
+      self.item = item
       machineinc = machineinc + 1
-      machine.inventories.inputs = Inventory.new({width = 1, height = 4})
-      machine.inventories.outputs = Inventory.new({width = 1, height = 4})
-      machine.inventories.outputs.canPlayerAdd = false
-      machine.image = item:getImage()
-      machine.isCrafting = false
+      self.inventories.inputs = Inventory.new({width = 1, height = 4})
+      self.inventories.outputs = Inventory.new({width = 1, height = 4})
+      self.inventories.outputs.canPlayerAdd = false
+      self.image = item:getImage()
+      self.isCrafting = false
     end
 
     function machine:update(dt)

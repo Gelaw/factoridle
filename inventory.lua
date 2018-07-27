@@ -110,7 +110,7 @@ local Inventory = {}
       for i, item in pairs(self.items) do
         if item.dataID then
           if item.dataID == dataID then
-            if quantity < item.quantity then
+            if quantity <=  item.quantity then
               return true
             else
               quantity = quantity - item.quantity

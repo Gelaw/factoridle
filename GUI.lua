@@ -1,15 +1,25 @@
+local Item = require "item"
 local GUI = {}
 
 function GUI.newGroup(key, x, y, w, h)
   local group = {}
-  group.elements = {}
-  group.key = "defaultKey"
-  group.x = x
-  group.y = y
-  group.w = w
-  group.h = h
-  group.visible = true
-  group.movable = true
+
+  function group:init()
+    group.elements = {}
+    group.key = key
+    group.x = x
+    group.y = y
+    group.w = w
+    group.h = h
+    group.visible = true
+    group.movable = true
+    local quitbutton = GUI.newButton("quit", self.w - 35, 5, 30, 30, "X", love.graphics.getFont(), "center", "center")
+    quitbutton.actionPerformed = function()
+      group.visible = false
+    end
+    quitbutton.color = {r = 240, g = 0, b = 0}
+    group:addElement(quitbutton, "quit")
+  end
 
   function group:addElement(element, id)
     if self.elements[id] == nil then
@@ -84,6 +94,8 @@ function GUI.newGroup(key, x, y, w, h)
       panel:resetClick()
     end
   end
+
+  group:init()
   return group
 end
 
@@ -501,5 +513,199 @@ function GUI.newMachinePanel(machine, x, y)
 
   mi:init()
   return mi
+end
+
+function GUI.newRecipePanel(recipe, name, x, y, w, h)
+  local recipePanel = GUI.newPanel(name, x, y, w, h)
+
+  function recipePanel:init()
+    self.transparent = false
+    self.selected = false
+    self.recipe = recipe
+    local panel = GUI.newPanel("fond", 0,0,w,h)
+    panel.color = {r=0,g=0,b=0}
+    panel.mode = "line"
+    panel.transparent = true
+    self.color = {r=240,g=240,b=240}
+    self:addElement(panel, "fond")
+    local ix = 5
+    for e, extrant in pairs(recipe.extrants) do
+      if e > 1 then
+        local plus = GUI.newText("+"..e, ix,5,10,50,"+", love.graphics.getFont(), "center", "center")
+        plus.color = {r = 0, g = 0, b = 0}
+        plus.transparent = true
+        recipePanel:addElement(plus, "+"..e)
+        ix = ix + 20
+      end
+      local item = GUI.newItemPanel(e, ix, 5, Item.new(extrant.itemID, extrant.quantity))
+      item.transparent = true
+      recipePanel:addElement(item, "extrant"..e)
+      ix = ix + 60
+    end
+    local egal = GUI.newText(":", ix,5,10,50,":", love.graphics.getFont(), "center", "center")
+    egal.color = {r = 0, g = 0, b = 0}
+    egal.transparent = true
+    recipePanel:addElement(egal, ":")
+    ix = ix + 20
+    for i, intrant in pairs(recipe.intrants) do
+      if i > 1 then
+        local plus = GUI.newText("+"..i, ix,5,10,50,"+", love.graphics.getFont(), "center", "center")
+        plus.color = {r = 0, g = 0, b = 0}
+        plus.transparent = true
+        recipePanel:addElement(plus, "+"..i)
+        ix = ix + 20
+      end
+      local item =GUI.newItemPanel(i, ix, 5, Item.new(intrant.itemID, intrant.quantity))
+      item.transparent = true
+      recipePanel:addElement(item, "intrant"..i)
+      ix = ix + 60
+    end
+  end
+
+  function recipePanel:select()
+    self.selected = true
+    self:getElement("fond").color = {r = 0, g = 0, b = 200}
+    self.color = {r=220,g=220,b=250}
+  end
+
+  function recipePanel:unselect()
+    self.selected = false
+    self:getElement("fond").color = {r = 0, g = 0, b = 0}
+    self.color = {r=240,g=240,b=240}
+  end
+
+  recipePanel:init()
+  return recipePanel
+end
+
+function GUI.newRecipeList(recipes, name, x, y, w, h)
+  local recipeList = GUI.newPanel(name, x, y, w, h)
+
+  function recipeList:init()
+    local panel = GUI.newPanel("fond", 0,0,w,h)
+    panel.color = {r=0,g=0,b=0}
+    panel.mode = "line"
+    panel.transparent = true
+    self.color = {r=240,g=240,b=240}
+    self:addElement(panel, "fond")
+    local  ly = 0
+    for r, recipe in pairs(recipes) do
+      self:addElement(GUI.newRecipePanel(recipe, "recipe"..r, 0, ly, w, 60), "recipe"..r)
+      ly = ly + 60
+    end
+  end
+
+  function recipeList:onClick(x, y, button, isTouch)
+    grab.status = "UI"
+    grab.ui = self
+    self.selectedRecipe = nil
+    for n, v in pairs(self.elements) do
+      if v.unselect then v:unselect() end
+    end
+    for n, v in pairs(self.elements) do
+      if v:doesTouch(x - self.x, y - self.y) then
+        v:select()
+        self.selectedRecipe = v.recipe
+        return
+      end
+    end
+  end
+
+  recipeList:init()
+  return recipeList
+end
+
+function GUI.newPlayerGroup(player)
+  local largeur = 400
+  local playerGroup = GUI.newGroup("Inventaire", width - largeur, 0, largeur, height)
+
+
+  function playerGroup:init()
+    self.movable = false
+    local playerPanel = GUI.newPanel("panel", 0, 0, largeur, height)
+    playerPanel.transparent = true
+    playerGroup:addElement(playerPanel, "panel")
+    local inventaire = GUI.newInventoryPanel("inventaire", 10, height, player.inventory)
+    inventaire.x = largeur - inventaire.w - 10
+    inventaire.y = height - inventaire.h - 10
+    playerPanel:addElement(inventaire, "inventaire")
+
+    local recipeList = GUI.newRecipeList(player.recipes, "recipes", 100, 30, largeur - 110, height - 60 - inventaire.h)
+    playerPanel:addElement(recipeList, "recipes")
+
+    local buttonCraft = GUI.newButton("buttonCraft",inventaire.x,inventaire.y - 80,50,50," ",love.graphics.getFont())
+    buttonCraft.actionPerformed = function ()
+      if recipeList.selectedRecipe then
+        player:craft(recipeList.selectedRecipe)
+      end
+    end
+    playerPanel:addElement(buttonCraft, "buttonCraft")
+    self.elements["quit"] = nil
+  end
+
+  local speed = 250
+
+  function playerGroup:update(dt)
+    for n,v in pairs(self.elements) do
+      v:update(dt)
+    end
+    if self.isHidding == true then
+      local x = self.x + speed * dt
+      if x > width then
+        self.x = width
+        self.visible = false
+        self.isHidding = false
+      else
+        self.x = x
+      end
+      return
+    end
+    if self.isShowing == true then
+      local x = self.x - speed * dt
+      if x <  width - largeur then
+        self.x =  width - largeur
+        self.isShowing = false
+      else
+        self.x = x
+      end
+    end
+  end
+
+
+  function playerGroup:toggle()
+    if self.visible == false or self.isHidding == true then
+      self:show()
+      return
+    end
+    self:hide()
+  end
+
+  function playerGroup:hide()
+    self.isHidding = true
+    self.isShowing = false
+  end
+
+  function playerGroup:show()
+    self.visible = true
+    self.isHidding = false
+    self.isShowing = true
+  end
+
+  function playerGroup:mousemoved(x, y, dx, dy)
+    self.isHidding = false
+    self.isShowing = false
+    local px = self.x + dx
+    if px < width and px > width - largeur then
+      self.x = px
+      if dx < 0 then
+        self:show()
+      else
+        self:hide()
+      end
+    end
+  end
+
+  playerGroup:init()
+  return playerGroup
 end
 return GUI

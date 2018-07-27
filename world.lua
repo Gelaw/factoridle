@@ -1,29 +1,33 @@
 local Entity = require "entity"
-local Inventory = require "inventory"
-local Item = require "item"
+local Player = require "player"
 local RessourceGenerator = require "ressourceGenerator"
 
 local World = {}
 
   function World.new()
     local world = {}
-    world.entities = {}
-    world.inventory = Inventory.new({width = 5, height = 4})
-    world.inventory:add(Item.new(9, 100))
-    world.inventory:add(Item.new(4, 100))
-    world.inventory:add(Item.new(5, 100))
-    world.inventory:add(Item.new(2, 100))
-    world.inventory:add(Item.new(3, 100))
-    world.posCam = {x = 0, y = 0}
+
+    function world:init()
+      self.entities = {}
+      self.player = Player.new()
+      world.posCam = {x = 0, y = 0}
+      local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
+      world:addEntity(forest)
+      interface:addGroupRG(forest)
+      local quarry = RessourceGenerator:new({x = 50, y = 250}, 3)
+      world:addEntity(quarry)
+      interface:addGroupRG(quarry)
+      local ironmine = RessourceGenerator:new({x = 50, y = 450}, 4)
+      world:addEntity(ironmine)
+      interface:addGroupRG(ironmine)
+      local coppermine = RessourceGenerator:new({x = 50, y = 650}, 5)
+      world:addEntity(coppermine)
+      interface:addGroupRG(coppermine)
+    end
 
     function world:addEntity(entity)
       table.insert(world.entities, entity)
     end
-
-    local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
-    world:addEntity(forest)
-    interface:addGroupRG(forest)
-
 
     function world:draw()
       love.graphics.setColor(25, 25, 25)
@@ -36,13 +40,12 @@ local World = {}
         entity:draw(world.posCam)
       end
       love.graphics.setColor(255,255,255)
-      love.graphics.print(world.inventory:prompt(), 30, height / 2)
       love.graphics.print("cam: x:" ..world.posCam.x.." y:"..world.posCam.y, 30, 30)
       love.graphics.print("mouse: x:" .. love.mouse.getX() - width/2 + world.posCam.x   .. " y:" ..love.mouse.getY() -height/2 + world.posCam.y, 30, 50)
       love.graphics.line(width/2, height/2 - 10, width/2, height/2 + 10)
       love.graphics.line(width/2 - 10, height/2, width/2 + 10, height/2)
-      local x = width - 300
-      local y = height - 500
+      local x =  10
+      local y = 200
       for n, v in pairs(grab) do
         if type(v) == "table" then
           for n2, v2 in pairs(v) do
@@ -65,15 +68,12 @@ local World = {}
     end
 
     function world:update(dt)
+      self.player:update(dt)
       for e, entity in pairs(self.entities) do
         if entity.update then
           entity:update(dt)
         end
       end
-    end
-
-    function world:initTreeGeneration()
-      forest:initGeneration()
     end
 
     function world:testmove(movingEntity, dx, dy)
@@ -176,6 +176,7 @@ local World = {}
       end
     end
 
+    world:init()
     return world
   end
 
