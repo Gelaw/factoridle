@@ -618,7 +618,7 @@ end
 function GUI.newPlayerGroup(player)
   local largeur = 400
   local playerGroup = GUI.newGroup("Inventaire", width - largeur, 0, largeur, height)
-
+  local handleImage = love.graphics.newImage("sprite/handle2.png")
 
   function playerGroup:init()
     self.movable = false
@@ -641,6 +641,14 @@ function GUI.newPlayerGroup(player)
     end
     playerPanel:addElement(buttonCraft, "buttonCraft")
     self.elements["quit"] = nil
+  end
+
+  function playerGroup:doesTouch(x, y)
+    if x> self.x and y > self.y and x < self.x + self.w and y<self.y + self.h and self.visible
+      or x>self.x-30 and y>self.h/2 - 30 and x<self.x and y<self.h + 30 then
+      return true
+    end
+    return false
   end
 
   local speed = 500
@@ -671,6 +679,14 @@ function GUI.newPlayerGroup(player)
     end
   end
 
+  function playerGroup:draw()
+    if self.visible then
+      for n,v in pairs(self.elements) do
+        v:draw(self.x, self.y, self.w, self.h, 0, 0)
+      end
+    end
+    love.graphics.draw(handleImage, self.x - 30, self.h/2 - 30)
+  end
 
   function playerGroup:toggle()
     if self.visible == false or self.isHidding == true then
@@ -692,6 +708,7 @@ function GUI.newPlayerGroup(player)
   end
 
   function playerGroup:mousemoved(x, y, dx, dy)
+    self.visible = true
     self.isHidding = false
     self.isShowing = false
     local px = self.x + dx
@@ -701,9 +718,15 @@ function GUI.newPlayerGroup(player)
   end
 
   function playerGroup:onRelease(x, y)
+    for p, panel in pairs(self.elements) do
+      if panel:doesTouch(x - self.x, y - self.y) then
+        panel:onRelease(x - self.x, y - self.y, pButton)
+        return
+      end
+    end
     if self.x < width - largeur + largeur / 2 then
       self:show()
-    elseif self.x > width - largeur / 2 then
+    elseif self.x >= width - largeur / 2 then
       self:hide()
     end
   end

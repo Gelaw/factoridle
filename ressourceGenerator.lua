@@ -18,6 +18,16 @@ local RessourceGenerator = {}
       if ressourceGenerator.isGenerating == true then
         return
       end
+      if RessourceGenerator.data[dataID]["requireTool"] then
+        if self.inventories.toolSlot.items[1] == nil then
+          return
+        end
+        if  self.inventories.toolSlot.items[1] == "empty"
+        or  self.inventories.toolSlot.items[1]:getType() ~= 4
+        or self.inventories.toolSlot.items[1]:getSubtype() ~= RessourceGenerator.data[dataID]["toolTypeID"]  then
+          return
+        end
+      end
       ressourceGenerator.timer = 1
       ressourceGenerator.isGenerating = true
     end
@@ -45,14 +55,14 @@ local RessourceGenerator = {}
   end
 
 RessourceGenerator.data = {{id = 1, name = "default", toolTypeID = 1, generatedID = 1,
-                              width = 50, height = 50},
+                              width = 50, height = 50, requireTool = false},
                           {id = 2, name = "forest", toolTypeID = 2, generatedID = 2,
-                              width = 50, height = 50},
+                              width = 50, height = 50, requireTool = false},
                           {id = 3, name = "quarry", toolTypeID = 3, generatedID = 3,
-                              width = 50, height = 50},
+                              width = 50, height = 50, requireTool = false},
                           {id = 4, name = "ironmine", toolTypeID = 3, generatedID = 4,
-                              width = 50, height = 50},
+                              width = 50, height = 50, requireTool = true},
                           {id = 5, name = "coppermine", toolTypeID = 3, generatedID = 5,
-                              width = 50, height = 50}}
+                              width = 50, height = 50, requireTool = true}}
 
 return RessourceGenerator
