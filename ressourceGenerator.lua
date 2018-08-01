@@ -7,7 +7,7 @@ local RessourceGenerator = {}
   function RessourceGenerator:new(pos, dataID)
     local ressourceGenerator = Entity:new(pos, {width = RessourceGenerator.data[dataID]["width"], height = RessourceGenerator.data[dataID]["height"]})
     ressourceGenerator.movable = false
-
+    ressourceGenerator.image = Item.image[RessourceGenerator.data[dataID]["generatedID"]]["image"]
     ressourceGenerator.inventories.toolSlot = Inventory.new({width = 1, height = 1})
     ressourceGenerator.inventories.inventory = Inventory.new({width = 5, height = 4})
     ressourceGenerator.inventories.inventory.canPlayerAdd = false
