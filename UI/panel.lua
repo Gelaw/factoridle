@@ -19,6 +19,13 @@ function newPanel(name,position,dimensions)
       if self.dimensions.r == nil then
         error(self.name.." r is nil!")
       end
+    elseif self.dimensions.shape == "arc" then
+      if self.dimensions.r == nil then
+        error(self.name.." r is nil!")
+      end
+      if self.dimensions.a == nil then
+        error(self.name.." a is nil!")
+      end
     else
       error(self.name .." has unknown shape!")
     end
@@ -48,22 +55,26 @@ function newPanel(name,position,dimensions)
         love.graphics.rectangle("fill", self.position.x + xParent -1, self.position.y + yParent-1, self.dimensions.w+2, self.dimensions.h+2)
       elseif self.dimensions.shape == "circle" then
         love.graphics.circle("fill", self.position.x + xParent, self.position.y + yParent, self.dimensions.r+1)
+      elseif self.dimensions.shape == "arc" then
+        love.graphics.arc("fill", self.position.x + xParent, self.position.y + yParent, self.dimensions.r+1, self.dimensions.a * 2* math.pi-math.pi/2, -math.pi/2)
       end
     end
     love.graphics.stencil(myStencilFunction, "increment")
     love.graphics.setStencilTest("equal", masknumber +1)
-    if self.image == nil then
-      love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
-      if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
-        love.graphics.rectangle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.w, self.dimensions.h)
-      elseif self.dimensions.shape == "circle" then
-        love.graphics.circle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.r)
-      end
-    else
+
+    love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
+    if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
+      love.graphics.rectangle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.w, self.dimensions.h)
+    elseif self.dimensions.shape == "circle" then
+      love.graphics.circle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.r)
+    elseif self.dimensions.shape == "arc" then
+      love.graphics.arc(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.r, 0, 2 * math.pi)
+    end
+    if self.image then
       love.graphics.setColor(255,255,255)
       if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
         love.graphics.draw(self.image, self.position.x + xParent, self.position.y + yParent)
-      elseif self.dimensions.shape == "circle" then
+      elseif self.dimensions.shape == "circle" or self.dimensions.shape == "arc" then
         love.graphics.draw(self.image, self.position.x + xParent - self.dimensions.r , self.position.y+yParent- self.dimensions.r)
       end
     end

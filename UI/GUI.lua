@@ -1,7 +1,9 @@
+hatches = love.graphics.newImage("sprite/hatches.png")
+
 require "ui.group"
 require "ui.element"
 require "ui.panel"
-require "ui.textPanel"
+require "ui.label"
 require "ui.button"
 require "ui.item.itemPanel"
 require "ui.item.inventoryPanel"
@@ -11,6 +13,7 @@ local GUI = {}
 
 function GUI.newRessourceGeneratorPanel(ressourceGenerator, position)
   local rgi = newPanel(ressourceGenerator:getName(), position,{w=400, h=300})
+  local button
 
   function rgi:init()
     self.transparent = true
@@ -18,13 +21,23 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, position)
     self.color.r = 200
     rgi:addElement(newInventoryPanel("toolslot", {x=30,y= 50}, ressourceGenerator.inventories.toolSlot), "toolSlot")
     rgi:addElement(newInventoryPanel("inventory", {x=100, y=50}, ressourceGenerator.inventories.inventory), "inventory")
-    local button = newButton("RG", {x=55, y=225},{shape="circle",r=25}, " ", love.graphics.getFont())
+    button = newButton("RG", {x=55, y=225},{shape="circle",r=25}, " ", love.graphics.getFont())
     rgi:addElement(button, "button")
     button.color = {r = 30, g = 150, b = 30}
     button.actionPerformed = function()
-      ressourceGenerator:initGeneration()
+      if ressourceGenerator:initGeneration() then
+        button:addTimer(ressourceGenerator.timer)
+        print("addedTimer")
+      end
     end
     button.image = ressourceGenerator:getImage()
+  end
+
+  function rgi:update(dt)
+    for n, v in pairs(self.elements) do
+      v:update(dt)
+    end
+    button.active = ressourceGenerator:canGenerate()
   end
 
   rgi:init()

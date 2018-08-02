@@ -15,7 +15,7 @@ function newRecipePanel(recipe, name, position, dimensions)
     local ix = 5
     for e, extrant in pairs(recipe.extrants) do
       if e > 1 then
-        local plus = newText("+"..e, {x=ix,y=5},{w=10,h=50},"+", love.graphics.getFont(), "center", "center")
+        local plus = newLabel("+"..e, {x=ix,y=5},{w=10,h=50},"+", love.graphics.getFont(), "center", "center")
         plus.color = {r = 0, g = 0, b = 0}
         plus.transparent = true
         recipePanel:addElement(plus, "+"..e)
@@ -26,14 +26,14 @@ function newRecipePanel(recipe, name, position, dimensions)
       recipePanel:addElement(item, "extrant"..e)
       ix = ix + 60
     end
-    local egal = newText(":", {x=ix,y=5},{w=10,h=50},":", love.graphics.getFont(), "center", "center")
+    local egal = newLabel(":", {x=ix,y=5},{w=10,h=50},":", love.graphics.getFont(), "center", "center")
     egal.color = {r = 0, g = 0, b = 0}
     egal.transparent = true
     recipePanel:addElement(egal, ":")
     ix = ix + 20
     for i, intrant in pairs(recipe.intrants) do
       if i > 1 then
-        local plus = newText("+"..i, {x=ix,y=5},{w=10,h=50},"+", love.graphics.getFont(), "center", "center")
+        local plus = newLabel("+"..i, {x=ix,y=5},{w=10,h=50},"+", love.graphics.getFont(), "center", "center")
         plus.color = {r = 0, g = 0, b = 0}
         plus.transparent = true
         recipePanel:addElement(plus, "+"..i)

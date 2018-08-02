@@ -15,21 +15,12 @@ local RessourceGenerator = {}
     ressourceGenerator.timer = 0
 
     function ressourceGenerator:initGeneration()
-      if ressourceGenerator.isGenerating == true then
-        return
+      if self:canGenerate() then
+        ressourceGenerator.timer = 1
+        ressourceGenerator.isGenerating = true
+        return true
       end
-      if RessourceGenerator.data[dataID]["requireTool"] then
-        if self.inventories.toolSlot.items[1] == nil then
-          return
-        end
-        if  self.inventories.toolSlot.items[1] == "empty"
-        or  self.inventories.toolSlot.items[1]:getType() ~= 4
-        or self.inventories.toolSlot.items[1]:getSubtype() ~= RessourceGenerator.data[dataID]["toolTypeID"]  then
-          return
-        end
-      end
-      ressourceGenerator.timer = 1
-      ressourceGenerator.isGenerating = true
+      return false
     end
 
     function ressourceGenerator:update(dt)
@@ -49,6 +40,23 @@ local RessourceGenerator = {}
 
     function ressourceGenerator:getName()
       return RessourceGenerator.data[dataID]["name"]
+    end
+
+    function ressourceGenerator:canGenerate()
+      if ressourceGenerator.isGenerating == true then
+        return false
+      end
+      if RessourceGenerator.data[dataID]["requireTool"] then
+        if self.inventories.toolSlot.items[1] == nil then
+          return false
+        end
+        if  self.inventories.toolSlot.items[1] == "empty"
+        or  self.inventories.toolSlot.items[1]:getType() ~= 4
+        or self.inventories.toolSlot.items[1]:getSubtype() ~= RessourceGenerator.data[dataID]["toolTypeID"]  then
+          return false
+        end
+      end
+      return true
     end
 
     return ressourceGenerator

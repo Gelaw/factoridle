@@ -4,17 +4,12 @@ function newInventoryPanel(name, position, inventory)
 
   function inventoryPanel:init()
     self.transparent = true
-    self.color = {r = 255, g = 255, b = 255, a = 255}
+    self.color = {r = 200, g = 255, b = 255, a = 245}
     for j = 0, inventory.size.height - 1, 1 do
       for i = 0, inventory.size.width - 1, 1 do
         local slot = j * inventory.size.width + i + 1
         local itemPanel =  newItemPanel(slot,{x=i * 50 + 5,y=j * 50 + 5}, inventory.items[slot])
         self:addElement(itemPanel, slot)
-        local fond = newPanel("fond"..slot,{x=i * 50 + 5,  y=j * 50 + 5}, {w=48,h=48})
-        fond.color = {r = 0, g = 0, b = 0}
-        fond.mode = "line"
-        fond.transparent = true
-        self:addElement(fond, "fond"..slot)
       end
     end
   end
