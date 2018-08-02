@@ -12,16 +12,16 @@ local World = {}
       self.entities = {}
       self.player = Player.new()
       world.posCam = {x = -5000, y = -5000}
-      local forest = RessourceGenerator:new({x = -4918, y = -5218}, 2)
+      local forest = RessourceGenerator:new({x = -4784, y = -5028}, 2)
       world:addEntity(forest)
       interface:addGroupRG(forest)
-      local quarry = RessourceGenerator:new({x = -5160, y = -4756}, 3)
+      local quarry = RessourceGenerator:new({x = -5068, y = -4074}, 3)
       world:addEntity(quarry)
       interface:addGroupRG(quarry)
-      local ironmine = RessourceGenerator:new({x = -5444, y = -4791}, 4)
+      local ironmine = RessourceGenerator:new({x = -5400, y = -4141}, 4)
       world:addEntity(ironmine)
       interface:addGroupRG(ironmine)
-      local coppermine = RessourceGenerator:new({x = -4522, y = -5237}, 5)
+      local coppermine = RessourceGenerator:new({x = -4315, y = -5074}, 5)
       world:addEntity(coppermine)
       interface:addGroupRG(coppermine)
     end
@@ -40,7 +40,7 @@ local World = {}
       end
     ]]
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(map, -(5000 + world.posCam.x), -(5000+world.posCam.y), 0, 1, 1)
+    love.graphics.draw(map, -(5000 + world.posCam.x), -(5000+world.posCam.y), 0, map:getWidth()/width, map:getHeight()/height)
 
       for i, entity in pairs(world.entities) do
         entity:draw(world.posCam)
