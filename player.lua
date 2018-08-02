@@ -43,9 +43,10 @@ function Player.new()
         self.isCrafting = true
         self.timer = recipe.time
         self.extrants = recipe.extrants
-        return
+        return true
       end
     end
+    return false
   end
 
   player:init()

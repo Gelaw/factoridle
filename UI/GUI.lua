@@ -60,25 +60,28 @@ end
 function GUI.newPlayerGroup(player)
   local largeur = 400
   local playerGroup = newGroup("Inventaire", {x=width - largeur, y=0}, {w=largeur, h=height})
-  local handleImage = love.graphics.newImage("sprite/handle2.png")
+  local handleImage = love.graphics.newImage("sprite/handle.png")
+  local inventaire, buttonCraft, recipeList
 
   function playerGroup:init()
     self.movable = false
     local playerPanel = newPanel("panel", {x=0, y=0}, {w=largeur, h=height})
     playerPanel.transparent = true
     playerGroup:addElement(playerPanel, "panel")
-    local inventaire = newInventoryPanel("inventaire", {x=10, y=height}, player.inventory)
+    inventaire = newInventoryPanel("inventaire", {x=10, y=height}, player.inventory)
     inventaire.position.x = largeur - inventaire.dimensions.w - 10
     inventaire.position.y = height - inventaire.dimensions.h - 10
     playerPanel:addElement(inventaire, "inventaire")
 
-    local recipeList = newRecipeList(player.recipes, "recipes", {x=100, y=30}, {w=largeur - 110, h=height - 60 - inventaire.dimensions.h})
+    recipeList = newRecipeList(player.recipes, "recipes", {x=100, y=30}, {w=largeur - 110, h=height - 60 - inventaire.dimensions.h})
     playerPanel:addElement(recipeList, "recipes")
 
-    local buttonCraft = newButton("buttonCraft", {x=inventaire.position.x,y=inventaire.position.y - 80},{w=50,h=50}," ",love.graphics.getFont())
+    buttonCraft = newButton("buttonCraft", {x=inventaire.position.x,y=inventaire.position.y - 80},{w=50,h=50}," ",love.graphics.getFont())
     buttonCraft.actionPerformed = function ()
       if recipeList.selectedRecipe then
-        player:craft(recipeList.selectedRecipe)
+        if player:craft(recipeList.selectedRecipe) then
+          buttonCraft:addTimer(recipeList.selectedRecipe.time)
+        end
       end
     end
     playerPanel:addElement(buttonCraft, "buttonCraft")
@@ -119,6 +122,13 @@ function GUI.newPlayerGroup(player)
         self.position.x = x
       end
     end
+    if recipeList.selectedRecipe then
+      if player.inventory:doesContainAll(recipeList.selectedRecipe.intrants) then
+        buttonCraft.active = true
+        return
+      end
+    end
+    buttonCraft.active = false
   end
 
   function playerGroup:draw()

@@ -51,8 +51,8 @@ Item.data = {{id = 1, name = "default", type = 1, limit = 100},
             {id = 6, name = "iron ingot", type = 2, limit = 100, src = "ironingot.png"},
             {id = 7, name = "copper ingot", type = 2, limit = 100, src = "copperingot.png"},
             {id = 8, name = "stone brick", type = 2, limit = 100},
-            {id = 9, name = "stone furnace", type = 3, subtype = 2, limit = 20, src = "stonefurnace.png"},
-            {id = 10, name = "stone pickaxe", type = 4, subtype = 3, limit = 100}}
+            {id = 9, name = "camp fire", type = 3, subtype = 2, limit = 20, src = "campfire.png"},
+            {id = 10, name = "stone pickaxe", type = 4, subtype = 3, limit = 100, src = "stonepickaxe.png"}}
 
 Item.image = {}
 

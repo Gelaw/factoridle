@@ -121,6 +121,15 @@ local Inventory = {}
       return false
     end
 
+    function inventory:doesContainAll(items)
+      for i, item in pairs(items) do
+        if not self:doesContain(item.itemID, item.quantity) then
+          return false
+        end
+      end
+      return true
+    end
+
     return inventory
   end
 
