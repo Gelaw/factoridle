@@ -40,71 +40,36 @@ function newPanel(name,position,dimensions)
     end
   end
 
-  function panel:draw(xParent, yParent, wParent, hParent, xoffset, yoffset)
+  function panel:draw(xParent, yParent, stencilFunction, masknumber)
     if not self.visible then return end
-    if self.dimensions.shape == nil or self.dimensions.shape == "rect" then
-    local sx = self.position.x - xoffset
-    local sy = self.position.y - yoffset
-    if sx > wParent or
-       sy > hParent or
-       sx < -self.dimensions.w or
-       sy < -self.dimensions.h then
-      return
+    local myStencilFunction = function ()
+      stencilFunction()
+      if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
+        love.graphics.rectangle("fill", self.position.x + xParent -1, self.position.y + yParent-1, self.dimensions.w+2, self.dimensions.h+2)
+      elseif self.dimensions.shape == "circle" then
+        love.graphics.circle("fill", self.position.x + xParent, self.position.y + yParent, self.dimensions.r+1)
+      end
     end
-
-    if self.position.x + self.dimensions.w < xoffset or
-      self.position.y + self.dimensions.h < yoffset then
-      return
-    end
-
-    local x, y, w, h = 0,0,0,0
-
-    if sy< 0 and self.position.y-yoffset + self.dimensions.h > hParent then
-      y = yParent
-      h = hParent
-    elseif sy< 0 then
-      y = yParent
-      h = self.dimensions.h + sy
-    elseif sy + self.dimensions.h > hParent then
-      y = yParent + sy
-      h = hParent - sy
-    else
-      y = yParent + sy
-      h = self.dimensions.h
-    end
-
-    if sx< 0 and self.position.x-xoffset + self.dimensions.w > wParent then
-      x = xParent
-      w = wParent
-    elseif sx< 0 then
-      x = xParent
-      w = self.dimensions.w + sx
-    elseif sx + self.dimensions.w > wParent then
-      x = xParent + sx
-      w = wParent - sx
-    else
-      x = xParent + sx
-      w = self.dimensions.w
-    end
-
+    love.graphics.stencil(myStencilFunction, "increment")
+    love.graphics.setStencilTest("equal", masknumber +1)
     if self.image == nil then
       love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
-      love.graphics.rectangle(self.mode, x, y, w, h)
+      if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
+        love.graphics.rectangle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.w, self.dimensions.h)
+      elseif self.dimensions.shape == "circle" then
+        love.graphics.circle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.r)
+      end
     else
       love.graphics.setColor(255,255,255)
-      love.graphics.draw(self.image, x, y, 0, 1, 1, xoffset, yoffset)
+      if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
+        love.graphics.draw(self.image, self.position.x + xParent, self.position.y + yParent)
+      elseif self.dimensions.shape == "circle" then
+        love.graphics.draw(self.image, self.position.x - self.dimensions.r, self.position.y- self.dimensions.r)
+      end
     end
+    love.graphics.setStencilTest()
     for n,v in pairs(self.elements) do
-      v:draw(x, y, w, h, sx <0 and -sx or 0, sy<0 and - sy or 0)
-      end
-    elseif self.dimensions.shape == "circle" then
-      if self.image == nil then
-        love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
-        love.graphics.circle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.r)
-      else
-        love.graphics.setColor(255,255,255)
-        love.graphics.draw(self.image, x, y, 0, 1, 1, xoffset, yoffset)
-      end
+      v:draw(self.position.x + xParent,  self.position.y + yParent, myStencilFunction, masknumber + 1)
     end
   end
 

@@ -41,8 +41,11 @@ function newGroup(key, position, dimensions)
 
   function group:draw()
     if self.visible then
+      local myStencilFunction = function ()
+        love.graphics.rectangle("fill", self.position.x, self.position.y, self.dimensions.w, self.dimensions.h)
+      end
       for n,v in pairs(self.elements) do
-        v:draw(self.position.x, self.position.y, self.dimensions.w, self.dimensions.h, 0, 0)
+        v:draw(self.position.x, self.position.y, myStencilFunction, 1)
       end
     end
   end

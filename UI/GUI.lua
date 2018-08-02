@@ -16,11 +16,11 @@ function GUI.newText(name,position,dimensions,pText, font, horizontalAlign, vert
   text.verticalAlign = verticalAlign
   text.color = {r = 255, g = 255, b = 255}
 
-  function text:draw(xParent, yParent,  wParent, hParent, xoffset, yoffset)
+  function text:draw(xParent, yParent)
     love.graphics.setColor(text.color.r, text.color.g, text.color.b)
     love.graphics.setFont(self.font)
-    local x = self.position.x + xParent - xoffset
-    local y = self.position.y + yParent - yoffset
+    local x = self.position.x + xParent
+    local y = self.position.y + yParent
     if self.horizontalAlign == "center" then
       x = x + ((text.dimensions.w - self.TextW) / 2)
     end
@@ -52,11 +52,20 @@ function GUI.newButton(name,position,dimensions,pText,font)
   else
     button.font = love.graphics.getFont()
   end
-  local label = GUI.newText(name, {x=0, y=0}, {w=dimensions.w, h=dimensions.h}, pText, font, "center", "center")
+
+
+  local pressedStatePanel, label
+  if dimensions.shape == "rect" or dimensions.shape == nil then
+    pressedStatePanel= newPanel("pressed", {x=dimensions.w /10,y= dimensions.h/10},{w=8*dimensions.w/10, h=8*dimensions.h/10})
+     label = GUI.newText(name, {x=0, y=0}, {w=dimensions.w, h=dimensions.h}, pText, font, "center", "center")
+  elseif dimensions.shape == "circle" then
+    pressedStatePanel= newPanel("pressed", {x=0,y=0},{shape="circle", r=8*dimensions.r/10})
+    label = GUI.newText(name, {x=-dimensions.r, y=-dimensions.r}, {w=dimensions.r*2, h=dimensions.r*2}, pText, font, "center", "center")
+  end
+
   button:addElement(label, "label")
   label.transparent = true
 
-  local pressedStatePanel = newPanel("pressed", {x=dimensions.w /10,y= dimensions.h/10},{w=8*dimensions.w/10, h=8*dimensions.h/10})
   pressedStatePanel.transparent = true
   pressedStatePanel.color = {r = 0, g = 0, b = 0}
   pressedStatePanel.visible = false
@@ -214,7 +223,7 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, position)
     self.transparent = true
     rgi:addElement(GUI.newInventoryPanel("toolslot", {x=30,y= 50}, ressourceGenerator.inventories.toolSlot), "toolSlot")
     rgi:addElement(GUI.newInventoryPanel("inventory", {x=100, y=50}, ressourceGenerator.inventories.inventory), "inventory")
-    local button = GUI.newButton("RG", {x=30, y=200},{w=50, h=50}, " ", love.graphics.getFont())
+    local button = GUI.newButton("RG", {x=55, y=225},{shape="circle",r=25}, " ", love.graphics.getFont())
     rgi:addElement(button, "button")
     button.color = {r = 30, g = 150, b = 30}
     button.actionPerformed = function()
@@ -365,10 +374,6 @@ function GUI.newPlayerGroup(player)
     end
     playerPanel:addElement(buttonCraft, "buttonCraft")
     self.elements["quit"] = nil
-    local circle = newPanel("circle test", {x=30, y=30}, {shape = "circle", r = 25})
-    circle.color.r = 0
-    circle.color.b = 0
-    playerPanel:addElement(circle, "circle test")
   end
 
   function playerGroup:doesTouch(x, y)
@@ -409,9 +414,11 @@ function GUI.newPlayerGroup(player)
 
   function playerGroup:draw()
     if self.visible then
+      local myStencilFunction = function ()
+        love.graphics.rectangle("fill", self.position.x, self.position.y, self.dimensions.w, self.dimensions.h)
+      end
       for n,v in pairs(self.elements) do
-        print(n)
-        v:draw(self.position.x, self.position.y, self.dimensions.w, self.dimensions.h, 0, 0)
+        v:draw(self.position.x, self.position.y, myStencilFunction, 1)
       end
     end
     love.graphics.draw(handleImage, self.position.x - 30, self.dimensions.h/2 - 30)

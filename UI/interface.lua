@@ -55,7 +55,7 @@ function Interface.new()
       RG.visible = false
     end
     quitbutton.color = {r = 240, g = 0, b = 0}
-    RG:addElement(quitbutton, "quit")
+    PRG:addElement(quitbutton, "quit")
     interface:addGroup(RG, ressourceGenerator:getName())
   end
 
@@ -68,7 +68,7 @@ function Interface.new()
     quitbutton.actionPerformed = function()
       M.visible = false
     end
-    quitbutton.color = {r = 240, g = 0, b = 0}
+    quitbutton.color = {r = 240, g = 240, b = 240}
     M:addElement(quitbutton, "quit")
     interface:addGroup(M, machine:getName())
   end
