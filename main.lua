@@ -1,7 +1,7 @@
 --Require
-local GUI = require "GUI"
+local GUI = require "UI.GUI"
 local World = require "world"
-local Interface = require "interface"
+local Interface = require "UI.interface"
 
 --image
 local titleScreen = love.graphics.newImage("sprite/titleScreen.png")
