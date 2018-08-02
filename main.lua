@@ -1,6 +1,7 @@
 --Require
+local GUI = require "GUI"
 local World = require "world"
-local Interface = require "UI.interface"
+local Interface = require "interface"
 
 --image
 local titleScreen = love.graphics.newImage("sprite/titleScreen.png")
@@ -51,7 +52,6 @@ end
   end
 
   function love.update(dt)
-
     if gameScreen == "menu" then
       timer = timer + dt
       if cursorIsVisible and timer > 0.5  then

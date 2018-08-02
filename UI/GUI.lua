@@ -365,6 +365,10 @@ function GUI.newPlayerGroup(player)
     end
     playerPanel:addElement(buttonCraft, "buttonCraft")
     self.elements["quit"] = nil
+    local circle = newPanel("circle test", {x=30, y=30}, {shape = "circle", r = 25})
+    circle.color.r = 0
+    circle.color.b = 0
+    playerPanel:addElement(circle, "circle test")
   end
 
   function playerGroup:doesTouch(x, y)

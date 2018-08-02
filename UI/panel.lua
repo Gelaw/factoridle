@@ -100,8 +100,7 @@ function newPanel(name,position,dimensions)
     elseif self.dimensions.shape == "circle" then
       if self.image == nil then
         love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
-        love.graphics.rectangle(self.mode, x, y, w, h)
-        love.graphics.circle(self.mode, x, y, self.dimensions.r)
+        love.graphics.circle(self.mode, self.position.x + xParent, self.position.y + yParent, self.dimensions.r)
       else
         love.graphics.setColor(255,255,255)
         love.graphics.draw(self.image, x, y, 0, 1, 1, xoffset, yoffset)
@@ -127,10 +126,16 @@ function newPanel(name,position,dimensions)
         return true
       end
     end
-    if x> self.position.x and y > self.position.y
-        and x < self.position.x + self.dimensions.w
-        and y<self.position.y + self.dimensions.h and self.transparent == false then
-      return true
+    if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
+      if x> self.position.x and y > self.position.y
+          and x < self.position.x + self.dimensions.w
+          and y<self.position.y + self.dimensions.h and self.transparent == false then
+        return true
+      end
+    elseif self.dimensions.shape == "circle" then
+      if math.sqrt((x - self.position.x)*(x - self.position.x) + (y - self.position.y)*(y - self.position.y)) < self.dimensions.r then
+        return true
+      end
     end
     return false
   end
