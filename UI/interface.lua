@@ -1,3 +1,4 @@
+require "ui.GUI"
 local GUI = require "UI.GUI"
 
 local Inventaire
@@ -50,7 +51,7 @@ function Interface.new()
     local RG = newGroup(ressourceGenerator:getName(), {x=100, y=100}, {w=PRG.dimensions.w, h= PRG.dimensions.h + 50})
     RG:addElement(PRG, ressourceGenerator:getName())
     RG.visible = false
-    local quitbutton = GUI.newButton("quit", {x=RG.dimensions.w - 35, y=5}, {w=30, h=30}, "X", love.graphics.getFont(), "center", "center")
+    local quitbutton = newButton("quit", {x=RG.dimensions.w - 35, y=5}, {w=30, h=30}, "X", love.graphics.getFont(), "center", "center")
     quitbutton.actionPerformed = function()
       RG.visible = false
     end
@@ -64,7 +65,7 @@ function Interface.new()
     local M = newGroup(machine:getName(), {x=100, y=100}, {w=PM.dimensions.w,h=PM.dimensions.h + 50})
     M:addElement(PM, machine:getName())
     M.visible = false
-    local quitbutton = GUI.newButton("quit", {x=M.dimensions.w - 35,y= 5}, {w=30, h=30}, "X", love.graphics.getFont(), "center", "center")
+    local quitbutton = newButton("quit", {x=M.dimensions.w - 35,y= 5}, {w=30, h=30}, "X", love.graphics.getFont(), "center", "center")
     quitbutton.actionPerformed = function()
       M.visible = false
     end
