@@ -1,6 +1,7 @@
 local Entity = require "entity"
 local Player = require "player"
 local RessourceGenerator = require "ressourceGenerator"
+local map = love.graphics.newImage("sprite/mapT.png")
 
 local World = {}
 
@@ -10,17 +11,17 @@ local World = {}
     function world:init()
       self.entities = {}
       self.player = Player.new()
-      world.posCam = {x = 0, y = 0}
-      local forest = RessourceGenerator:new({x = 50, y = 50}, 2)
+      world.posCam = {x = -5000, y = -5000}
+      local forest = RessourceGenerator:new({x = -4918, y = -5218}, 2)
       world:addEntity(forest)
       interface:addGroupRG(forest)
-      local quarry = RessourceGenerator:new({x = 50, y = 250}, 3)
+      local quarry = RessourceGenerator:new({x = world.posCam.x, y = world.posCam.y}, 3)
       world:addEntity(quarry)
       interface:addGroupRG(quarry)
-      local ironmine = RessourceGenerator:new({x = 50, y = 450}, 4)
+      local ironmine = RessourceGenerator:new({x = -5444, y = -4791}, 4)
       world:addEntity(ironmine)
       interface:addGroupRG(ironmine)
-      local coppermine = RessourceGenerator:new({x = 50, y = 650}, 5)
+      local coppermine = RessourceGenerator:new({x = -4999, y = -4999}, 5)
       world:addEntity(coppermine)
       interface:addGroupRG(coppermine)
     end
@@ -30,15 +31,21 @@ local World = {}
     end
 
     function world:draw()
+      --[[
       love.graphics.setColor(50, 50, 50)
       for x = (width/2)%50- world.posCam.x%50 - 50 ,  width + 50, 50 do
         for y = (height/2)%50- world.posCam.y%50 - 50,  height + 50, 50 do
           love.graphics.rectangle("fill", x - 24  , y - 24 , 48, 48)
         end
       end
+    ]]
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.draw(map, -(5000 + world.posCam.x), -(5000+world.posCam.y), 0, 1, 1)
+
       for i, entity in pairs(world.entities) do
         entity:draw(world.posCam)
       end
+
       love.graphics.setColor(255,255,255)
       love.graphics.print("cam: x:" ..world.posCam.x.." y:"..world.posCam.y, 30, 30)
       love.graphics.print("mouse: x:" .. love.mouse.getX() - width/2 + world.posCam.x   .. " y:" ..love.mouse.getY() -height/2 + world.posCam.y, 30, 50)
