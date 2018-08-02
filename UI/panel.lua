@@ -64,7 +64,7 @@ function newPanel(name,position,dimensions)
       if self.dimensions.shape == "rect" or self.dimensions.shape == nil then
         love.graphics.draw(self.image, self.position.x + xParent, self.position.y + yParent)
       elseif self.dimensions.shape == "circle" then
-        love.graphics.draw(self.image, self.position.x - self.dimensions.r, self.position.y- self.dimensions.r)
+        love.graphics.draw(self.image, self.position.x + xParent - self.dimensions.r , self.position.y+yParent- self.dimensions.r)
       end
     end
     love.graphics.setStencilTest()

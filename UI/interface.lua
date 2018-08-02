@@ -61,15 +61,15 @@ function Interface.new()
 
   function interface:addGroupMachine(machine)
     local PM = GUI.newMachinePanel(machine,{x=0,y=0})
-    local M = newGroup(machine:getName(), {x=100, y=100}, {w=PM.w,h=PM.h + 50})
+    local M = newGroup(machine:getName(), {x=100, y=100}, {w=PM.dimensions.w,h=PM.dimensions.h + 50})
     M:addElement(PM, machine:getName())
     M.visible = false
-    local quitbutton = GUI.newButton("quit", {x=M.w - 35,y= 5}, {w=30, h=30}, "X", love.graphics.getFont(), "center", "center")
+    local quitbutton = GUI.newButton("quit", {x=M.dimensions.w - 35,y= 5}, {w=30, h=30}, "X", love.graphics.getFont(), "center", "center")
     quitbutton.actionPerformed = function()
       M.visible = false
     end
-    quitbutton.color = {r = 240, g = 240, b = 240}
-    M:addElement(quitbutton, "quit")
+    quitbutton.color = {r = 240, g = 30, b = 30}
+    PM:addElement(quitbutton, "quit")
     interface:addGroup(M, machine:getName())
   end
 

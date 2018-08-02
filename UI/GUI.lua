@@ -221,6 +221,8 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, position)
 
   function rgi:init()
     self.transparent = true
+    self.color.b = 150
+    self.color.r = 200
     rgi:addElement(GUI.newInventoryPanel("toolslot", {x=30,y= 50}, ressourceGenerator.inventories.toolSlot), "toolSlot")
     rgi:addElement(GUI.newInventoryPanel("inventory", {x=100, y=50}, ressourceGenerator.inventories.inventory), "inventory")
     local button = GUI.newButton("RG", {x=55, y=225},{shape="circle",r=25}, " ", love.graphics.getFont())
@@ -229,6 +231,7 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, position)
     button.actionPerformed = function()
       ressourceGenerator:initGeneration()
     end
+    button.image = ressourceGenerator:getImage()
   end
 
   rgi:init()
@@ -421,6 +424,7 @@ function GUI.newPlayerGroup(player)
         v:draw(self.position.x, self.position.y, myStencilFunction, 1)
       end
     end
+    love.graphics.setColor(255, 255, 255)
     love.graphics.draw(handleImage, self.position.x - 30, self.dimensions.h/2 - 30)
   end
 
