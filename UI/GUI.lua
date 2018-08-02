@@ -122,7 +122,7 @@ function GUI.newPlayerGroup(player)
         self.position.x = x
       end
     end
-    if recipeList.selectedRecipe then
+    if recipeList.selectedRecipe and player.isCrafting == false then
       if player.inventory:doesContainAll(recipeList.selectedRecipe.intrants) then
         buttonCraft.active = true
         return
