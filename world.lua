@@ -12,17 +12,18 @@ local World = {}
     function world:init()
       self.entities = {}
       self.player = Player.new()
-      world.posCam = {x = -5000, y = -5000}
-      local forest = RessourceGenerator:new({x = -4784, y = -5028}, 2)
+      world.posCam = { minx = width/2, miny = height/2, maxx = Map.chunknumber*Map.chunksize*32-width/2, maxy = Map.chunknumber*Map.chunksize*32-height/2}
+      world.posCam.x, world.posCam.y = world.posCam.minx, world.posCam.miny
+      local forest = RessourceGenerator:new({x = 20*32, y = 32}, 2)
       world:addEntity(forest)
       interface:addGroupRG(forest)
-      local quarry = RessourceGenerator:new({x = -5068, y = -4074}, 3)
+      local quarry = RessourceGenerator:new({x = 5*32, y = 15*32}, 3)
       world:addEntity(quarry)
       interface:addGroupRG(quarry)
-      local ironmine = RessourceGenerator:new({x = -5400, y = -4141}, 4)
+      local ironmine = RessourceGenerator:new({x = 6*32, y = 7*32}, 4)
       world:addEntity(ironmine)
       interface:addGroupRG(ironmine)
-      local coppermine = RessourceGenerator:new({x = -4315, y = -5074}, 5)
+      local coppermine = RessourceGenerator:new({x = 10*32, y = 8*32}, 5)
       world:addEntity(coppermine)
       interface:addGroupRG(coppermine)
     end
@@ -150,17 +151,17 @@ local World = {}
     function world:mousemoved(x, y, dx, dy)
       if love.mouse.isDown(1) then
         if world.handledEntity == nil then
-          if world.posCam.x - dx < -5000 then
-            world.posCam.x = -5000
-          elseif world.posCam.x - dx > 5000 then
-            world.posCam.x = 5000
+          if world.posCam.x - dx < world.posCam.minx then
+            world.posCam.x = world.posCam.minx
+          elseif world.posCam.x - dx > world.posCam.maxx then
+            world.posCam.x = world.posCam.maxx
           else
             world.posCam.x = world.posCam.x - dx
           end
-          if world.posCam.y - dy < -5000 then
-            world.posCam.y = -5000
-          elseif world.posCam.y - dy > 5000 then
-            world.posCam.y = 5000
+          if world.posCam.y - dy < world.posCam.miny then
+            world.posCam.y = world.posCam.miny
+          elseif world.posCam.y - dy > world.posCam.maxy then
+            world.posCam.y = world.posCam.maxy
           else
             world.posCam.y = world.posCam.y - dy
           end
