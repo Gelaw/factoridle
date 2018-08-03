@@ -2,7 +2,6 @@ local tileSet = love.graphics.newImage("sprite/tileset/tileSet_1.png")
 
 local Map = {}
 
-<<<<<<< HEAD
 function Map:init()
   Map.seed = 5312
   Map.chunksize = 6
@@ -102,99 +101,6 @@ function Map:cleanSmallchunks()
             if Map.Tmap[j+k] and Map.Tmap[j+k][i+l] then
               Map.Tmap[j+k][i+l][1] = target
             end
-=======
-grounds = {}
-
-for l = 0, 1 do
-  for c = 0, 1 do
-    table.insert(grounds, {x=4*l+0.5, y=3*c+1.5})
-  end
-end
-
-math.randomseed(12345678)
-Map.chunksize = 6
-Map.chunknumber = 30
-
-Map.Tmap = {}
-for j = 1, Map.chunknumber*Map.chunksize, 1 do
-  Map.Tmap[j] = {}
-  for i = 1, Map.chunknumber*Map.chunksize, 1 do
-    Map.Tmap[j][i] = {}
-    if j%Map.chunksize==1 and i%Map.chunksize==1 then
-      if Map.Tmap[j-1] and Map.Tmap[j-1][i] and Map.Tmap[j] and Map.Tmap[j][i-1] then
-        if Map.Tmap[j-1][i][1] == Map.Tmap[j][i-1][1] then
-          if math.random() < 0.3 then
-            table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-          else
-            table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-          end
-        elseif math.random() < 0.75 then
-          if math.random() < 0.5 then
-            table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-          else
-            table.insert(Map.Tmap[j][i], Map.Tmap[j][i-1][1])
-          end
-        else
-          table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-        end
-      elseif Map.Tmap[j-1] and Map.Tmap[j-1][i] then
-        if math.random() < 0.75 then
-          table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-        else
-          table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-        end
-      elseif Map.Tmap[j] and Map.Tmap[j][i-1] then
-        if math.random() < 0.75 then
-          table.insert(Map.Tmap[j][i], Map.Tmap[j][i-1][1])
-        else
-          table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-        end
-      else
-        table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-      end
-    elseif i%Map.chunksize == 1 then
-      table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-    else
-      table.insert(Map.Tmap[j][i], Map.Tmap[j][i-1][1])
-    end
-  end
-end
-
-for j = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-  for i = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-    local isLonely = true
-    local neighs = {}
-    if Map.Tmap[j-1] and Map.Tmap[j-1][i] then
-      table.insert(neighs, Map.Tmap[j-1][i][1])
-      if Map.Tmap[j-1][i][1]==Map.Tmap[j][i][1] then
-        isLonely = false
-      end
-    end
-    if Map.Tmap[j+Map.chunksize] and Map.Tmap[j+Map.chunksize][i] then
-      table.insert(neighs, Map.Tmap[j+Map.chunksize][i][1])
-      if Map.Tmap[j+Map.chunksize][i][1]==Map.Tmap[j][i][1] then
-        isLonely = false
-      end
-    end
-    if Map.Tmap[j] and Map.Tmap[j][i-1] then
-      table.insert(neighs,Map.Tmap[j][i-1][1])
-      if Map.Tmap[j][i-1][1]==Map.Tmap[j][i][1] then
-        isLonely = false
-      end
-    end
-    if Map.Tmap[j] and Map.Tmap[j][i+Map.chunksize] then
-      table.insert(neighs,Map.Tmap[j][i+Map.chunksize][1])
-      if Map.Tmap[j][i+Map.chunksize][1]==Map.Tmap[j][i][1] then
-        isLonely = false
-      end
-    end
-    if isLonely then
-      local target = neighs[math.random(#neighs)]
-      for k = 0, Map.chunksize - 1 do
-        for l = 0, Map.chunksize - 1 do
-          if Map.Tmap[j+k] and Map.Tmap[j+k][i+l] then
-            Map.Tmap[j+k][i+l][1] = target
->>>>>>> fa3084b1ef81b77323fe5a968a386f93feec1f41
           end
         end
       end
