@@ -15,9 +15,8 @@ function Map:draw(posCam)
   --   for i,y in pairs(x) do
     for x = (width/2)%32- posCam.x%32 ,  width + 32, 32 do
       for y = (height/2)%32- posCam.y%32,  height + 32, 32 do
-        local i = math.floor((x-posCam.x-5000)/32)
-        local j = math.floor((y-posCam.y-5000)/32)
-        print(i,j)
+        local i = math.floor((x+posCam.x+5000)/32)
+        local j = math.floor((y+posCam.y+5000)/32)
         if Map.Tmap[j] and Map.Tmap[j][i] then
 
           local l = (Map.Tmap[j][i]) % (tileSet:getWidth() / 32)
