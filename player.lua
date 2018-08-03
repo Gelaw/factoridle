@@ -9,6 +9,9 @@ function Player.new()
 
   function player:init()
     self.inventory = Inventory.new({width = 7, height = 4})
+    for i = 2, #Item.data do
+      self.inventory:add(Item.new(i, 100))
+    end
     self.recipes = Recipe.getRecipes("player")
     self.isCrafting = false
   end

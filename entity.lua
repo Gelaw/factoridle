@@ -99,7 +99,11 @@ local Entity = {}
       local sy = entity.pos.y - posCam.y + height/2 - entity.dim.height/2
       if entity.image then
         love.graphics.setColor(255,255,255, (entity.ghost and 100 or 255))
-        love.graphics.draw(self:getImage(), sx, sy, 0, 1, 1)
+        if self.quad then
+          love.graphics.draw(self:getImage(), self.quad, sx, sy)
+        else
+          love.graphics.draw(self:getImage(), sx, sy)
+        end
         return
       end
       love.graphics.setColor(entity.color.r,entity.color.g,entity.color.b, (entity.ghost and 100 or 255))
@@ -153,6 +157,7 @@ local Entity = {}
       self.inventories.outputs = Inventory.new({width = 1, height = 4})
       self.inventories.outputs.canPlayerAdd = false
       self.image = item:getImage()
+      self.animImage = item:getAnimImage()
       self.isCrafting = false
     end
 
@@ -172,14 +177,28 @@ local Entity = {}
             end
             self.isCrafting = true
             self.timer = recipe.time
+            self.animFrame = 1
+            self.animTimer = 0.5
+            self.image = self.animImage
+            self.quad =  love.graphics.newQuad(50*self.animFrame,0, 50, 50, self.animImage:getDimensions())
             self.extrants = recipe.extrants
             return
           end
         end
       else
+        self.animTimer = self.animTimer - dt
+        if self.animTimer < 0 then
+          self.animFrame = (self.animFrame + 1) %  (self.animImage:getWidth()/50) + 1
+          self.animTimer = 0.5
+          self.quad =  love.graphics.newQuad(50*self.animFrame,0, 50, 50, self.animImage:getWidth(), self.animImage:getHeight())
+        end
         self.timer = self.timer - dt
         if self.timer <= 0 then
           self.isCrafting = false
+          self.image = item:getImage()
+          self.animFrame = nil
+          self.animTimer = nil
+          self.quad = nil
           self.timer = nil
           for i, extrant in pairs(self.extrants) do
             print(extrant.itemID, extrant.quantity)
