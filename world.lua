@@ -1,5 +1,6 @@
 local Entity = require "entity"
 local Player = require "player"
+local Map = require "map"
 local RessourceGenerator = require "ressourceGenerator"
 local map = love.graphics.newImage("sprite/mapT.png")
 
@@ -40,8 +41,8 @@ local World = {}
       end
     ]]
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(map, -(5000 + world.posCam.x), -(5000+world.posCam.y), 0, map:getWidth()/width, map:getHeight()/height)
-
+    --love.graphics.draw(map, -(5000 + world.posCam.x), -(5000+world.posCam.y), 0, map:getWidth()/width, map:getHeight()/height)
+    Map:draw(world.posCam)
       for i, entity in pairs(world.entities) do
         entity:draw(world.posCam)
       end
