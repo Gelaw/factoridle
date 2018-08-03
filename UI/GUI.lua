@@ -23,11 +23,10 @@ function GUI.newRessourceGeneratorPanel(ressourceGenerator, position)
     rgi:addElement(newInventoryPanel("inventory", {x=100, y=50}, ressourceGenerator.inventories.inventory), "inventory")
     button = newButton("RG", {x=55, y=225},{shape="circle",r=25}, " ", love.graphics.getFont())
     rgi:addElement(button, "button")
-    button.color = {r = 30, g = 150, b = 30}
+    button.color = {r = 200, g = 200, b = 200}
     button.actionPerformed = function()
       if ressourceGenerator:initGeneration() then
         button:addTimer(ressourceGenerator.timer)
-        print("addedTimer")
       end
     end
     button.image = ressourceGenerator:getImage()
