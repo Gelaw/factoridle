@@ -16,6 +16,12 @@ function Item.new(dataID, quantity)
     end
   end
 
+  function item:getAnimImage()
+    if Item.image[item.dataID] then
+      return Item.image[item.dataID]["anim"]
+    end
+  end
+
   function item:getType()
     return Item.data[item.dataID]["type"]
   end
@@ -51,13 +57,13 @@ Item.data = {{id = 1, name = "default", type = 1, limit = 100},
             {id = 6, name = "iron ingot", type = 2, limit = 100, src = "ironingot.png"},
             {id = 7, name = "copper ingot", type = 2, limit = 100, src = "copperingot.png"},
             {id = 8, name = "stone brick", type = 2, limit = 100},
-            {id = 9, name = "camp fire", type = 3, subtype = 2, limit = 20, src = "campfire.png"},
+            {id = 9, name = "camp fire", type = 3, subtype = 2, limit = 20, src = "campfire.png", hasAnim = true},
             {id = 10, name = "stone pickaxe", type = 4, subtype = 3, limit = 100, src = "stonepickaxe.png"}}
 
 Item.image = {}
 
 for i, data in pairs(Item.data) do
-  table.insert(Item.image, {id = i, image =  (data.src and love.graphics.newImage("sprite/"..data.src) or nil)})
+  table.insert(Item.image, {id = i, image =  (data.src and love.graphics.newImage("sprite/"..data.src) or nil), anim =  (data.hasAnim and love.graphics.newImage("sprite/anim-"..data.src) or nil)})
 end
 
 local typeData = {{id = 1, name = "default"},
