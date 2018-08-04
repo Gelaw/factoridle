@@ -58,7 +58,7 @@ end
 
 function GUI.newPlayerGroup(player)
   local largeur = 400
-  local playerGroup = newGroup("Inventaire", {x=width - largeur, y=0}, {w=largeur, h=height})
+  local playerGroup = newGroup("Inventaire", {x=width, y=0}, {w=largeur, h=height})
   local handleImage = love.graphics.newImage("sprite/handle.png")
   local inventaire, buttonCraft, recipeList
 

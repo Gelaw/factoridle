@@ -4,11 +4,12 @@ local Map = {}
 
 function Map:init()
   Map.seed = 5312
-  Map.chunksize = 6
-  Map.chunknumber = 30
+  Map.chunksize = 15
+  Map.chunknumber = 12
   self:generateMap()
   self:cleanSmallchunks()
   self:arrangeChunksBorders()
+  self:generateFioriture()
 end
 
 function Map:generateMap()
@@ -184,6 +185,73 @@ function Map:arrangeChunksBorders()
               elseif l == Map.chunksize-1 then
                 if differents.right then
                   Map.Tmap[j+k][i+l] = {{x=old.x + 0.5, y=old.y}}
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+function Map:generateFioriture()
+  for j = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
+    for i = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
+      if math.random() < 0.8 then
+        local kstart = math.random(0, Map.chunksize - 2)
+        local lstart = math.random(0, Map.chunksize - 2)
+        local kend = math.random(kstart, Map.chunksize - 1)
+        local lend = math.random(lstart, Map.chunksize - 1)
+        for k = kstart, kend do
+          for l = lstart, lend do
+            if Map.Tmap[j+k] and Map.Tmap[j+k][i+l] and Map.Tmap[j+1] and Map.Tmap[j+1][i+1] then
+              if (Map.Tmap[j+1][i+1][1].x == 0.5 and Map.Tmap[j+1][i+1][1].y == 1.5)or (Map.Tmap[j+1][i+1][1].x == 4.5 and Map.Tmap[j+1][i+1][1].y == 1.5) then
+                if (k==kstart and k==kend) or (l==lstart and l==lend) then
+                  Map.Tmap[j+k][i+l][2] = {x=8, y=0}
+                elseif k==kstart and l==lstart then
+                  Map.Tmap[j+k][i+l][2] = {x=8, y=1}
+                elseif k==kstart and l==lend then
+                  Map.Tmap[j+k][i+l][2] = {x=9, y=1}
+                elseif k==kend and l==lstart then
+                  Map.Tmap[j+k][i+l][2] = {x=8, y=2}
+                elseif k==kend and l==lend then
+                  Map.Tmap[j+k][i+l][2] = {x=9, y=2}
+                elseif k==kstart then
+                  Map.Tmap[j+k][i+l][2] = {x=8.5, y=1}
+                elseif k==kend then
+                  Map.Tmap[j+k][i+l][2] = {x=8.5, y=2}
+                elseif l==lstart then
+                  Map.Tmap[j+k][i+l][2] = {x=8, y=1.5}
+                elseif l==lend then
+                  Map.Tmap[j+k][i+l][2] = {x=9, y=1.5}
+                else
+                  Map.Tmap[j+k][i+l][2] = {x=8.5, y=1.5}
+                end
+              end
+              if Map.Tmap[j+1][i+1][1].x == 0.5 and Map.Tmap[j+1][i+1][1].y == 4.5 then
+                if kend-kstart>0 and lend-lstart>0 then
+                  if (k==kstart and k==kend) or (l==lstart and l==lend) then
+                    Map.Tmap[j+k][i+l][2] = {x=10, y=9}
+                  elseif k==kstart and l==lstart then
+                    Map.Tmap[j+k][i+l][2] = {x=10, y=10}
+                  elseif k==kstart and l==lend then
+                    Map.Tmap[j+k][i+l][2] = {x=11, y=10}
+                  elseif k==kend and l==lstart then
+                    Map.Tmap[j+k][i+l][2] = {x=10, y=11}
+                  elseif k==kend and l==lend then
+                    Map.Tmap[j+k][i+l][2] = {x=11, y=11}
+                  elseif k==kstart then
+                    Map.Tmap[j+k][i+l][2] = {x=10.5, y=10}
+                  elseif k==kend then
+                    Map.Tmap[j+k][i+l][2] = {x=10.5, y=11}
+                  elseif l==lstart then
+                    Map.Tmap[j+k][i+l][2] = {x=10, y=10.5}
+                  elseif l==lend then
+                    Map.Tmap[j+k][i+l][2] = {x=11, y=10.5}
+                  else
+                    Map.Tmap[j+k][i+l][2] = {x=10.5, y=10.5}
+                  end
                 end
               end
             end
