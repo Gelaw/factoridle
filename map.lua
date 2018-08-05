@@ -3,7 +3,7 @@ local tileSet = love.graphics.newImage("sprite/tileset/tileSet_1.png")
 local Map = {}
 
 function Map:init()
-  Map.seed = 5312
+  Map.seed = "5312"
   Map.chunksize = 15
   Map.chunknumber = 12
   self:generateMap()

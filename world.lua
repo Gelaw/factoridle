@@ -33,16 +33,7 @@ local World = {}
     end
 
     function world:draw()
-      --[[
-      love.graphics.setColor(50, 50, 50)
-      for x = (width/2)%50- world.posCam.x%50 - 50 ,  width + 50, 50 do
-        for y = (height/2)%50- world.posCam.y%50 - 50,  height + 50, 50 do
-          love.graphics.rectangle("fill", x - 24  , y - 24 , 48, 48)
-        end
-      end
-    ]]
     love.graphics.setColor(255, 255, 255)
-    --love.graphics.draw(map, -(5000 + world.posCam.x), -(5000+world.posCam.y), 0, map:getWidth()/width, map:getHeight()/height)
     Map:draw(world.posCam)
       for i, entity in pairs(world.entities) do
         entity:draw(world.posCam)
