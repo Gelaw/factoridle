@@ -6,16 +6,8 @@ local Entity = {}
   function Entity:new(pos,dim,image)
     local entity = {}
     entity.image = nil
-    if pos then
-      entity.pos = pos
-    else
-      entity.pos = {x = 0, y = 0}
-    end
-    if dim then
-      entity.dim = dim
-    else
-      entity.dim = {width = 50, height = 50}
-    end
+    entity.pos = (pos and pos or {x=0, y=0})
+    entity.dim = (dim and dim or {width=50, height=50})
     entity.movable = true
     entity.ghost = false
     entity.name = "defaultname"
@@ -41,16 +33,8 @@ local Entity = {}
       if entity.movable == false then
         return
       end
-      if x %50 < 25 then
-        x = x - x %50
-      else
-        x = x-  x %50 + 50
-      end
-      if y %50 < 25 then
-        y = y -y %50
-      else
-        y = y - y %50 + 50
-      end
+      x = x - x % 50 + (x%50>25 and 50 or 0)
+      y = y - y % 50 + (y%50>25 and 50 or 0)
       closedPos = {}
       openPos = {{x = x, y = y}}
       while true do
@@ -92,11 +76,13 @@ local Entity = {}
       return false
     end
 
-    entity.color = {r = 55 + love.math.random() * 200, g = 55 + love.math.random() * 200, b = 55 + love.math.random() * 200}
+    entity.color = {r = 255, g =255, b = 255, a = 50}
 
     function entity:draw(posCam)
       local sx = entity.pos.x - posCam.x + width/2 - entity.dim.width/2
       local sy = entity.pos.y - posCam.y + height/2 - entity.dim.height/2
+      love.graphics.setColor(entity.color.r,entity.color.g,entity.color.b, entity.color.a)
+      love.graphics.rectangle("fill", sx, sy, entity.dim.width, entity.dim.height)
       if entity.image then
         love.graphics.setColor(255,255,255, (entity.ghost and 100 or 255))
         if self.quad then
@@ -104,21 +90,21 @@ local Entity = {}
         else
           love.graphics.draw(self:getImage(), sx, sy)
         end
-        return
       end
-      love.graphics.setColor(entity.color.r,entity.color.g,entity.color.b, (entity.ghost and 100 or 255))
-      love.graphics.rectangle("fill", sx, sy, entity.dim.width, entity.dim.height)
     end
 
     function entity:drawTo(sx, sy)
-      if entity.image then
-        love.graphics.setColor(255,255,255)
-        love.graphics.draw(self:getImage(), sx- entity.dim.width/2, sy- entity.dim.height/2, 0, 1, 1)
-        return
-      end
       love.graphics.setColor(entity.color.r,entity.color.g,entity.color.b)
       love.graphics.rectangle("fill", sx - entity.dim.width/2, sy- entity.dim.height/2,
         entity.dim.width, entity.dim.height)
+      if entity.image then
+        love.graphics.setColor(255,255,255)
+        if self.quad then
+          love.graphics.draw(self:getImage(), self.quad, sx - entity.dim.width/2, sy- entity.dim.height/2)
+        else
+          love.graphics.draw(self:getImage(), sx - entity.dim.width/2, sy - entity.dim.height/2)
+        end
+      end
     end
 
     function entity:doesntHave(inventory)

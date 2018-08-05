@@ -128,6 +128,13 @@ function GUI.newPlayerGroup(player)
       end
     end
     buttonCraft.active = false
+    if self.isShowing == false and self.isHidding == false and (grab.status ~= "UI" or grab.ui ~= self) then
+      if self.position.x < width - largeur / 2 then
+        self:show()
+      elseif self.position.x >= width - largeur / 2 then
+        self:hide()
+      end
+    end
   end
 
   function playerGroup:draw()
@@ -178,11 +185,6 @@ function GUI.newPlayerGroup(player)
         panel:onRelease(x - self.position.x, y - self.position.y, pButton)
         return
       end
-    end
-    if self.position.x < width - largeur / 2 then
-      self:show()
-    elseif self.position.x >= width - largeur / 2 then
-      self:hide()
     end
   end
 
