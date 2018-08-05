@@ -14,12 +14,13 @@ end
 
 function Map:generateMap()
   math.randomseed(Map.seed)
-  grounds = {}
-  for l = 0, 1 do
-    for c = 0, 1 do
-      table.insert(grounds, {x=4*l+0.5, y=3*c+1.5})
-    end
-  end
+  grounds = {
+    {x=0.5, y=1.5},
+    {x=0.5, y=4.5},
+    {x=4.5, y=1.5},
+    {x=4.5, y=4.5}
+  }
+
   Map.Tmap = {}
   for j = 1, Map.chunknumber*Map.chunksize, 1 do
     Map.Tmap[j] = {}
