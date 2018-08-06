@@ -17,7 +17,7 @@ local cursorIsVisible = true
 local timer = 0
 
 function love.load()
-  love.window.setFullscreen()
+  love.window.setFullscreen(true)
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
 

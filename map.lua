@@ -2,261 +2,266 @@ local tileSet = love.graphics.newImage("sprite/tileset/tileSet_1.png")
 
 local Map = {}
 
+orientations = {
+  center  = {{x=1, y=3}, {x=2, y=3}, {x=1, y=4}, {x=2, y=4}},
+  left =    {{x=0, y=3}, {x=0, y=4}},
+  right =   {{x=3, y=3}, {x=3, y=4}},
+  up =      {{x=1 ,y=2}, {x=2, y=2}},
+  down =    {{x=1 ,y=5}, {x=2, y=5}},
+  upleftcorner = {{x=0, y=2}},
+  uprightcorner = {{x=1, y=0}},
+  downleftcorner ={{x=0, y=1}},
+  downrightcorner = {{x=1, y=1}},
+  upleftinwardcorner = {{x=2, y=0}},
+  uprightinwardcorner= {{x=3, y=0}},
+  downleftinwardcorner={{x=2, y=1}},
+  downrightinwardcorner={{x=3, y=1}}
+}
+
+
+  positionmatches = {
+    XXXVVVVVV = "up",
+    VXXVVVVVV = "up",
+    XXVVVVVVV = "up",
+    VVVVVVXXX = "down",
+    VVVVVVVXX = "down",
+    VVVVVVXXV = "down",
+    XVVXVVXVV = "left",
+    VVVXVVXVV = "left",
+    XVVXVVVVV = "left",
+    VVXVVXVVX = "right",
+    VVVVVXVVX = "right",
+    VVXVVXVVV = "right",
+    XXXXVVXVV = "upleftcorner",
+    VXXXVVXVV = "upleftcorner",
+    VXVXVVXVV = "upleftcorner",
+    VXXXVVVVV = "upleftcorner",
+    VXVXVVVVV = "upleftcorner",
+    XXVXVVXVV = "upleftcorner",
+    XXXXVVVVV = "upleftcorner",
+    XXXVVXVVX = "uprightcorner",
+    XXXVVXVVV = "uprightcorner",
+    XXVVVXVVX = "uprightcorner",
+    VXXVVXVVX = "uprightcorner",
+    XVVXVVXXX = "downleftcorner",
+    XVVXVVVXX = "downleftcorner",
+    XVVXVVXXV = "downleftcorner",
+    VVXVVXXXX = "downrightcorner",
+    VVXVVXXXV = "downrightcorner",
+    VVXVVXVXX = "downrightcorner",
+    VVVVVXXXX = "downrightcorner",
+    XVVVVVVVV = "upleftinwardcorner",
+    VVXVVVVVV = "uprightinwardcorner",
+    VVVVVVXVV = "downleftinwardcorner",
+    VVVVVVVVX = "downrightinwardcorner"
+  }
+
+grounds = {
+  {name = "grass",
+  orientation = {x=0, y=0}
+    },
+  {name = "rock",
+  orientation = {x=0, y=6},
+  },
+  {name = "sand",
+  orientation = {x=8, y=6},
+  }
+}
+
+fioritures = {
+  {name = "tree", orientation = {x=16, y=0}, priority = 5, matches = {"grass"}},
+  {name = "pine", orientation = {x=20, y=0}, priority = 5, matches = {"grass"}},
+  {name = "tallgrass", orientation = {x=12, y=0}, priority = 10, matches = {"grass"}},
+  {name = "hill", orientation = {x=24, y=0}, priority = 5, matches = {"grass"}},
+  {name = "hole", orientation = {x=20, y=18}, priority = 5, matches = {"sand", "rock"}},
+  {name = "sandhill", orientation = {x=24, y=6}, priority = 5, matches = {"sand"}}
+}
+
 function Map:init()
-  Map.seed = "5312"
-  Map.chunksize = 15
+  Map.seed = 532100
+  Map.chunksize = 32
   Map.chunknumber = 12
-  self:generateMap()
+  self:generateChunks()
   self:cleanSmallchunks()
-  self:arrangeChunksBorders()
+  self:generateMap()
   self:generateFioriture()
 end
 
-function Map:generateMap()
+function Map:generateChunks()
   math.randomseed(Map.seed)
-  grounds = {
-    {x=0.5, y=1.5},
-    {x=0.5, y=4.5},
-    {x=4.5, y=1.5},
-    {x=4.5, y=4.5}
-  }
-
-  Map.Tmap = {}
-  for j = 1, Map.chunknumber*Map.chunksize, 1 do
-    Map.Tmap[j] = {}
-    for i = 1, Map.chunknumber*Map.chunksize, 1 do
-      Map.Tmap[j][i] = {}
-      if j%Map.chunksize==1 and i%Map.chunksize==1 then
-        if Map.Tmap[j-1] and Map.Tmap[j-1][i] and Map.Tmap[j] and Map.Tmap[j][i-1] then
-          if Map.Tmap[j-1][i][1] == Map.Tmap[j][i-1][1] then
-            if math.random() < 0.3 then
-              table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-            else
-              table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-            end
-          elseif math.random() < 0.75 then
-            if math.random() < 0.5 then
-              table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-            else
-              table.insert(Map.Tmap[j][i], Map.Tmap[j][i-1][1])
-            end
+  chunks = {}
+  for j = 1, Map.chunknumber, 1 do
+    chunks[j] = {}
+    for i = 1, Map.chunknumber, 1 do
+      if chunks[j-1] and chunks[j-1][i] and chunks[j][i-1] then
+        if chunks[j-1][i] == chunks[j][i-1] and math.random() < 0.7 then
+          chunks[j][i] = chunks[j-1][i]
+        elseif math.random() < 0.75 then
+          if math.random() < 0.5 then
+            chunks[j][i] = chunks[j-1][i]
           else
-            table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
+            chunks[j][i] = chunks[j][i-1]
           end
-        elseif Map.Tmap[j-1] and Map.Tmap[j-1][i] then
-          if math.random() < 0.75 then
-            table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-          else
-            table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-          end
-        elseif Map.Tmap[j] and Map.Tmap[j][i-1] then
-          if math.random() < 0.75 then
-            table.insert(Map.Tmap[j][i], Map.Tmap[j][i-1][1])
-          else
-            table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
-          end
-        else
-          table.insert(Map.Tmap[j][i], grounds[math.random(#grounds)])
         end
-      elseif i%Map.chunksize == 1 then
-        table.insert(Map.Tmap[j][i], Map.Tmap[j-1][i][1])
-      else
-        table.insert(Map.Tmap[j][i], Map.Tmap[j][i-1][1])
+      elseif chunks[j-1] and chunks[j-1][i] and math.random() < 0.75 then
+        chunks[j][i] = chunks[j-1][i]
+      elseif chunks[j][i-1] and math.random() < 0.75 then
+        chunks[j][i] = chunks[j][i-1]
       end
+      if not chunks[j][i] then
+        chunks[j][i] = grounds[math.random(#grounds)].name
+      end
+    end
+  end
+end
+
+function Map:generateMap()
+    math.randomseed(Map.seed)
+  map = {}
+  for j = 1, Map.chunknumber*Map.chunksize, 1 do
+    map[j] = {}
+    for i = 1, Map.chunknumber*Map.chunksize, 1 do
+      map[j][i] = {}
+      map[j][i].type = chunks[math.ceil(j/Map.chunksize)][math.ceil(i/Map.chunksize)]
+      match = ""
+      for k = j-1, j+1 do
+        for l = i-1, i+1 do
+          if chunks[math.ceil((k)/Map.chunksize)] and chunks[math.ceil((k)/Map.chunksize)][math.ceil((l)/Map.chunksize)] and chunks[math.ceil((k)/Map.chunksize)][math.ceil((l)/Map.chunksize)] == map[j][i].type then
+            match = match.."V"
+          else
+            match = match.."X"
+          end
+        end
+      end
+      if positionmatches[match] then
+        map[j][i].position = positionmatches[match]
+      else
+        map[j][i].position = "center"
+      end
+      for _, ground in pairs(grounds) do
+        if map[j][i].type == ground.name then
+          map[j][i].var = math.floor(math.random(1, #orientations[map[j][i].position]))
+        end
+      end
+      if not map[j][i].var then
+        map[j][i].var = 1
+      end
+      map[j][i].fioritures = {}
     end
   end
 end
 
 function Map:cleanSmallchunks()
-  for j = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-    for i = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
+  math.randomseed(Map.seed)
+  for j = 1, Map.chunknumber do
+    for i = 1, Map.chunknumber do
       local isLonely = true
       local neighs = {}
-      if Map.Tmap[j-1] and Map.Tmap[j-1][i] then
-        table.insert(neighs, Map.Tmap[j-1][i][1])
-        if Map.Tmap[j-1][i][1]==Map.Tmap[j][i][1] then
+      if chunks[j-1] and chunks[j-1][i] then
+        table.insert(neighs, chunks[j-1][i])
+        if chunks[j-1][i]==chunks[j][i] then
           isLonely = false
         end
       end
-      if Map.Tmap[j+Map.chunksize] and Map.Tmap[j+Map.chunksize][i] then
-        table.insert(neighs, Map.Tmap[j+Map.chunksize][i][1])
-        if Map.Tmap[j+Map.chunksize][i][1]==Map.Tmap[j][i][1] then
+      if chunks[j+1] and chunks[j+1][i] then
+        table.insert(neighs, chunks[j+1][i])
+        if chunks[j+1][i]==chunks[j][i] then
           isLonely = false
         end
       end
-      if Map.Tmap[j] and Map.Tmap[j][i-1] then
-        table.insert(neighs,Map.Tmap[j][i-1][1])
-        if Map.Tmap[j][i-1][1]==Map.Tmap[j][i][1] then
+      if chunks[j][i-1] then
+        table.insert(neighs,chunks[j][i-1])
+        if chunks[j][i-1]==chunks[j][i] then
           isLonely = false
         end
       end
-      if Map.Tmap[j] and Map.Tmap[j][i+Map.chunksize] then
-        table.insert(neighs,Map.Tmap[j][i+Map.chunksize][1])
-        if Map.Tmap[j][i+Map.chunksize][1]==Map.Tmap[j][i][1] then
+      if chunks[j][i+1] then
+        table.insert(neighs,chunks[j][i+1])
+        if chunks[j][i+Map.chunksize]==chunks[j][i] then
           isLonely = false
         end
       end
       if isLonely then
-        local target = neighs[math.random(#neighs)]
-        for k = 0, Map.chunksize - 1 do
-          for l = 0, Map.chunksize - 1 do
-            if Map.Tmap[j+k] and Map.Tmap[j+k][i+l] then
-              Map.Tmap[j+k][i+l][1] = target
-            end
-          end
-        end
-      end
-    end
-  end
-end
-
-function Map:arrangeChunksBorders()
-  for j = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-    for i = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-      local differents = {up = true, down = true, left = true, right = true}
-      if Map.Tmap[j-2] and Map.Tmap[j-2][i+1] then
-        if  Map.Tmap[j-2][i+1][1]==Map.Tmap[j][i][1] then
-          differents.up = false
-        end
-      end
-      if Map.Tmap[j+Map.chunksize] and Map.Tmap[j+Map.chunksize][i] then
-        if Map.Tmap[j+Map.chunksize][i][1] == Map.Tmap[j][i][1] then
-          differents.down = false
-        end
-      end
-      if Map.Tmap[j+1] and Map.Tmap[j+1][i-2] then
-        if Map.Tmap[j+1][i-2][1] == Map.Tmap[j][i][1] then
-          differents.left = false
-        end
-      end
-      if Map.Tmap[j] and Map.Tmap[j][i+Map.chunksize] then
-        if Map.Tmap[j][i+Map.chunksize][1] == Map.Tmap[j][i][1] then
-          differents.right = false
-        end
-      end
-      if differents.up or differents.left or differents.down or differents.right then
-        for k = 0, Map.chunksize - 1 do
-          for l = 0, Map.chunksize - 1 do
-            if Map.Tmap[j+k] and Map.Tmap[j+k][i+l] then
-              local old = Map.Tmap[j+k][i+l][1]
-              if k==0 and l == 0 then
-                if differents.up and differents.left then
-                  Map.Tmap[j+k][i+l] = {{x=old.x - 0.5, y = old.y - 0.5}}
-                elseif differents.up then
-                  Map.Tmap[j+k][i+l] = {{x=old.x, y=old.y - 0.5}}
-                elseif differents.left then
-                  Map.Tmap[j+k][i+l] = {{x=old.x - 0.5, y=old.y}}
-                end
-              elseif k==Map.chunksize-1 and l == 0 then
-                if differents.down and differents.left then
-                  Map.Tmap[j+k][i+l] = {{x=old.x - 0.5, y=old.y + 0.5}}
-                elseif differents.down then
-                  Map.Tmap[j+k][i+l] = {{x=old.x, y=old.y + 0.5}}
-                elseif differents.left then
-                  Map.Tmap[j+k][i+l] = {{x=old.x - 0.5, y=old.y}}
-                end
-              elseif k==0 and l == Map.chunksize-1 then
-                if differents.up and differents.right then
-                  Map.Tmap[j+k][i+l] = {{x=old.x + 0.5, y=old.y - 0.5}}
-                elseif differents.up then
-                  Map.Tmap[j+k][i+l] = {{x=old.x, y=old.y - 0.5}}
-                elseif differents.right then
-                  Map.Tmap[j+k][i+l] = {{x=old.x + 0.5, y=old.y}}
-                end
-              elseif k== Map.chunksize-1 and l == Map.chunksize-1 then
-                if differents.down and differents.right then
-                  Map.Tmap[j+k][i+l] = {{x=old.x + 0.5, y=old.y + 0.5}}
-                elseif differents.down then
-                  Map.Tmap[j+k][i+l] = {{x=old.x, y=old.y + 0.5}}
-                elseif differents.right then
-                  Map.Tmap[j+k][i+l] = {{x=old.x + 0.5, y=old.y}}
-                end
-              elseif k==0 then
-                if differents.up then
-                  Map.Tmap[j+k][i+l] = {{x=old.x, y=old.y - 0.5}}
-                end
-              elseif k==Map.chunksize-1 then
-                if differents.down then
-                  Map.Tmap[j+k][i+l] = {{x=old.x, y=old.y + 0.5}}
-                end
-              elseif l == 0 then
-                if differents.left then
-                  Map.Tmap[j+k][i+l] = {{x=old.x - 0.5, y=old.y}}
-                end
-              elseif l == Map.chunksize-1 then
-                if differents.right then
-                  Map.Tmap[j+k][i+l] = {{x=old.x + 0.5, y=old.y}}
-                end
-              end
-            end
-          end
-        end
+        chunks[j][i] = neighs[math.random(#neighs)]
       end
     end
   end
 end
 
 function Map:generateFioriture()
-  for j = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-    for i = 1, Map.chunknumber*Map.chunksize, Map.chunksize do
-      if math.random() < 0.8 then
-        local kstart = math.random(0, Map.chunksize - 2)
-        local lstart = math.random(0, Map.chunksize - 2)
-        local kend = math.random(kstart, Map.chunksize - 1)
-        local lend = math.random(lstart, Map.chunksize - 1)
-        for k = kstart, kend do
-          for l = lstart, lend do
-            if Map.Tmap[j+k] and Map.Tmap[j+k][i+l] and Map.Tmap[j+1] and Map.Tmap[j+1][i+1] then
-              if (Map.Tmap[j+1][i+1][1].x == 0.5 and Map.Tmap[j+1][i+1][1].y == 1.5)or (Map.Tmap[j+1][i+1][1].x == 4.5 and Map.Tmap[j+1][i+1][1].y == 1.5) then
-                if (k==kstart and k==kend) or (l==lstart and l==lend) then
-                  Map.Tmap[j+k][i+l][2] = {x=8, y=0}
-                elseif k==kstart and l==lstart then
-                  Map.Tmap[j+k][i+l][2] = {x=8, y=1}
-                elseif k==kstart and l==lend then
-                  Map.Tmap[j+k][i+l][2] = {x=9, y=1}
-                elseif k==kend and l==lstart then
-                  Map.Tmap[j+k][i+l][2] = {x=8, y=2}
-                elseif k==kend and l==lend then
-                  Map.Tmap[j+k][i+l][2] = {x=9, y=2}
-                elseif k==kstart then
-                  Map.Tmap[j+k][i+l][2] = {x=8.5, y=1}
-                elseif k==kend then
-                  Map.Tmap[j+k][i+l][2] = {x=8.5, y=2}
-                elseif l==lstart then
-                  Map.Tmap[j+k][i+l][2] = {x=8, y=1.5}
-                elseif l==lend then
-                  Map.Tmap[j+k][i+l][2] = {x=9, y=1.5}
-                else
-                  Map.Tmap[j+k][i+l][2] = {x=8.5, y=1.5}
-                end
-              end
-              if Map.Tmap[j+1][i+1][1].x == 0.5 and Map.Tmap[j+1][i+1][1].y == 4.5 then
-                if kend-kstart>0 and lend-lstart>0 then
-                  if (k==kstart and k==kend) or (l==lstart and l==lend) then
-                    Map.Tmap[j+k][i+l][2] = {x=10, y=9}
-                  elseif k==kstart and l==lstart then
-                    Map.Tmap[j+k][i+l][2] = {x=10, y=10}
-                  elseif k==kstart and l==lend then
-                    Map.Tmap[j+k][i+l][2] = {x=11, y=10}
-                  elseif k==kend and l==lstart then
-                    Map.Tmap[j+k][i+l][2] = {x=10, y=11}
-                  elseif k==kend and l==lend then
-                    Map.Tmap[j+k][i+l][2] = {x=11, y=11}
-                  elseif k==kstart then
-                    Map.Tmap[j+k][i+l][2] = {x=10.5, y=10}
-                  elseif k==kend then
-                    Map.Tmap[j+k][i+l][2] = {x=10.5, y=11}
-                  elseif l==lstart then
-                    Map.Tmap[j+k][i+l][2] = {x=10, y=10.5}
-                  elseif l==lend then
-                    Map.Tmap[j+k][i+l][2] = {x=11, y=10.5}
-                  else
-                    Map.Tmap[j+k][i+l][2] = {x=10.5, y=10.5}
-                  end
+    math.randomseed(Map.seed)
+  function sortFioriture(f1, f2)
+    local s1, s2 = 0, 0
+    for _, f in pairs(fioritures) do
+      if (f1.type == f.name) then
+        s1 = f.priority
+      end
+      if f2.type == f.name then
+        s2 = f.priority
+      end
+    end
+    return s1 > s2
+  end
+  local number = math.random(200, 500)
+  n = 1
+  while n < number do
+    local y = math.random(1, #map)
+    local x = math.random(1, #map[y])
+    local ysize = math.random(3, 7)
+    local xsize = math.random(3, 7)
+    local middleType = map[y][x].type
+    local fioriture = fioritures[math.random(1, #fioritures)]
+    local ok = false
+    for _, m in pairs(fioriture.matches) do
+      if m == middleType then ok = true end
+    end
+    if ok then
+      n = n + 1
+      for j = y - ysize + 1 , y + ysize do
+        for i = x - xsize + 1, x + xsize do
+          if map[j] and map[j][i] and map[j][i].type == middleType then
+            local ok = true
+            for _, f in pairs(map[j][i].fioritures) do
+              if f.priority == fioriture.priority then ok = false end
+            end
+            if ok then
+              table.insert(map[j][i].fioritures, {type=fioriture.name})
+              table.sort(map[j][i].fioritures,  sortFioriture)
+            end
+          end
+        end
+      end
+    end
+  end
+  for j = 1, Map.chunknumber*Map.chunksize do
+    for i = 1, Map.chunknumber*Map.chunksize do
+      for _, fioriture in pairs(map[j][i].fioritures) do
+        match =""
+        for k = j-1, j+1 do
+          for l = i-1, i+1 do
+            local V = false
+            if map[k] and map[k][l] then
+              for _, f in pairs(map[k][l].fioritures) do
+                if f.type == fioriture.type then
+                  V = true
                 end
               end
             end
+            if V then
+              match = match.."V"
+            else
+              match = match.."X"
+            end
           end
+        end
+        if positionmatches[match] then
+          fioriture.position = positionmatches[match]
+        else
+          fioriture.position = "center"
+        end
+        fioriture.var = (j+i)%2 + ((fioriture.position== "up" or fioriture.position== "left") and 2 or 1)
+        if (fioriture.var == nil) or (orientations[fioriture.position][fioriture.var] == nil) then
+          fioriture.var = 1
         end
       end
     end
@@ -265,26 +270,40 @@ end
 
 function Map:draw(posCam)
   local fx, fy
-  for x = (width/2)%32- posCam.x%32 - 32, width + 32, 32 do
-    for y = (height/2)%32- posCam.y%32 -32, height + 32, 32 do
-      i = math.floor((x+posCam.x-width/2)/32) + 1
-      j = math.floor((y+posCam.y-height/2)/32) + 1
-      if Map.Tmap[j] and Map.Tmap[j][i] then
-        -- local l = (Map.Tmap[j][i]) % (tileSet:getWidth() / 32)
-        -- local c = math.floor( (Map.Tmap[j][i]) / (tileSet:getWidth() / 32))
-        -- local currX = l * 32
-        -- local currY = c * 32
-        for n, v in pairs(Map.Tmap[j][i]) do
-          local q = love.graphics.newQuad(v["x"]*32, v["y"]*32, 32, 32, tileSet:getDimensions())
-          love.graphics.setColor(255, 255, 255)
-          love.graphics.draw(tileSet, q, x ,y)
+  for x = (width/2)%16- posCam.x%16 - 16, width + 16, 16 do
+    for y = (height/2)%16- posCam.y%16-16, height + 16, 16 do
+      i = math.floor((x+posCam.x-width/2)/16) + 1
+      j = math.floor((y+posCam.y-height/2)/16) + 1
+      if map[j] and map[j][i] then
+        for _, ground in pairs(grounds) do
+          if ground.name == map[j][i].type then
+            local q = love.graphics.newQuad((orientations[map[j][i].position][map[j][i].var].x+ground.orientation.x)*16, (orientations[map[j][i].position][map[j][i].var].y+ground.orientation.y)*16, 16, 16, tileSet:getDimensions())
+            love.graphics.setColor(255, 255, 255)
+            love.graphics.draw(tileSet, q, x ,y)
+          end
+        end
+        for _, fiori in pairs(map[j][i].fioritures) do
+          if fiori.position and fiori.var then
+            for _, fioriture in pairs(fioritures) do
+              if fiori.type == fioriture.name then
+                local q = love.graphics.newQuad(
+                (orientations[fiori.position][fiori.var].x
+                +fioriture.orientation.x)*16,
+                (orientations[fiori.position][fiori.var].y
+                +fioriture.orientation.y)*16,
+                16, 16, tileSet:getDimensions())
+                love.graphics.setColor(255, 255, 255)
+                love.graphics.draw(tileSet, q, x ,y)
+              end
+            end
+          end
         end
         if love.keyboard.isDown("g") then
-          love.graphics.rectangle("line", x, y, 32, 32)
+          love.graphics.rectangle("line", x, y, 16, 16)
         end
       else
         love.graphics.setColor(255, 0, 255)
-        love.graphics.rectangle("fill", x, y, 32, 32)
+        love.graphics.rectangle("fill", x, y, 16, 16)
       end
     end
   end

@@ -12,7 +12,7 @@ local World = {}
     function world:init()
       self.entities = {}
       self.player = Player.new()
-      world.posCam = { minx = width/2, miny = height/2, maxx = Map.chunknumber*Map.chunksize*32-width/2, maxy = Map.chunknumber*Map.chunksize*32-height/2}
+      world.posCam = { minx = width/2, miny = height/2, maxx = Map.chunknumber*Map.chunksize*16-width/2, maxy = Map.chunknumber*Map.chunksize*16-height/2}
       world.posCam.x, world.posCam.y = world.posCam.minx, world.posCam.miny
       local forest = RessourceGenerator:new({x = 20*32, y = 32}, 2)
       world:addEntity(forest)
