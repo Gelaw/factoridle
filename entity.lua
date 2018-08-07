@@ -140,6 +140,11 @@ local Entity = {}
       self.item = item
       machineinc = machineinc + 1
       self.inventories.inputs = Inventory.new({width = 1, height = 4})
+      if item:getData().fueltype == "item" then
+        self.inventories.fuel = Inventory.new({width = 1, height = 1})
+      end
+      self.fuelTimer = 0
+      self.fuelTimerBase = 0
       self.inventories.outputs = Inventory.new({width = 1, height = 4})
       self.inventories.outputs.canPlayerAdd = false
       self.image = item:getImage()
@@ -148,7 +153,11 @@ local Entity = {}
     end
 
     function machine:update(dt)
+      if self.fuelTimer > 0 then
+        self.fuelTimer = self.fuelTimer - dt
+      end
       if self.isCrafting == false then
+
         local recipes = Recipe.getRecipes(item:getSubtype())
         for r, recipe in pairs(recipes) do
           local ok = true
@@ -158,39 +167,83 @@ local Entity = {}
             end
           end
           if ok then
+            if self.fuelTimer <= 0 then
+              self:refuel()
+              if self.fuelTimer <= 0 then return end
+            end
             for i, intrant in pairs(recipe.intrants) do
               machine.inventories.inputs:removeQuantityOf(intrant.itemID, intrant.quantity)
             end
             self.isCrafting = true
             self.timer = recipe.time
-            self.animFrame = 1
-            self.animTimer = 0.5
-            self.image = self.animImage
-            self.quad =  love.graphics.newQuad(50*self.animFrame,0, 50, 50, self.animImage:getDimensions())
             self.extrants = recipe.extrants
+            self:turnAnimOn()
             return
           end
         end
       else
-        self.animTimer = self.animTimer - dt
-        if self.animTimer < 0 then
-          self.animFrame = (self.animFrame + 1) %  (self.animImage:getWidth()/50) + 1
-          self.animTimer = 0.5
-          self.quad =  love.graphics.newQuad(50*self.animFrame,0, 50, 50, self.animImage:getWidth(), self.animImage:getHeight())
+        if self.fuelTimer <= 0 then
+          self:refuel()
+          if self.fuelTimer <= 0 then return end
         end
+        self:updateAnim(dt)
         self.timer = self.timer - dt
         if self.timer <= 0 then
           self.isCrafting = false
-          self.image = item:getImage()
-          self.animFrame = nil
-          self.animTimer = nil
-          self.quad = nil
+          self:turnAnimOff()
           self.timer = nil
           for i, extrant in pairs(self.extrants) do
             print(extrant.itemID, extrant.quantity)
             machine.inventories.outputs:add(Item.new(extrant.itemID, extrant.quantity))
           end
           self.extrants = nil
+        end
+      end
+    end
+
+    function machine:addFuel(tf)
+      self.fuelTimer = tf
+      self.fuelTimerBase = tf
+    end
+
+    function machine:refuel()
+      if self.fuelTimer <= 0 then
+        if item:getData().fueltype == "item" then
+          for _, fuel in pairs(item:getData().fuel) do
+            if self.inventories.fuel:doesContain(fuel.id, 1) then
+              self.inventories.fuel:removeQuantityOf(fuel.id, 1)
+              self:addFuel(fuel.time)
+            end
+          end
+        end
+      end
+    end
+
+    function machine:turnAnimOn()
+      if self.animImage then
+        self.animFrame = 1
+        self.animTimer = 0.5
+        self.image = self.animImage
+        self.quad =  love.graphics.newQuad(50*self.animFrame,0, 50, 50, self.animImage:getDimensions())
+      end
+    end
+
+    function machine:turnAnimOff()
+      if self.animImage then
+        self.image = item:getImage()
+        self.animFrame = nil
+        self.animTimer = nil
+        self.quad = nil
+      end
+    end
+
+    function machine:updateAnim(dt)
+      if self.animImage and self.animTimer then
+        self.animTimer = self.animTimer - dt
+        if self.animTimer < 0 then
+          self.animFrame = (self.animFrame + 1) %  (self.animImage:getWidth()/50) + 1
+          self.animTimer = 0.5
+          self.quad =  love.graphics.newQuad(50*self.animFrame,0, 50, 50, self.animImage:getWidth(), self.animImage:getHeight())
         end
       end
     end

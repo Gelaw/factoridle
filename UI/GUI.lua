@@ -45,11 +45,24 @@ end
 
 function GUI.newMachinePanel(machine, position)
   local mi = newPanel(machine:getName(), position, {w=400, h=300})
-
   function mi:init()
     self.transparent = true
     mi:addElement(newInventoryPanel("input", {x=30, y=50}, machine.inventories.inputs), "input")
-    mi:addElement(newInventoryPanel("output", {x=100, y=50}, machine.inventories.outputs), "output")
+    if machine.inventories.fuel then
+      mi:addElement(newInventoryPanel("input", {x=150, y=50}, machine.inventories.fuel), "fuel")
+    end
+    local fuelBar = newPanel("fuelBar", {x=150, y=200}, {w=50, h=10})
+    fuelBar.color = {r=30, g=30, b= 30}
+    local fuelLoadBar = newPanel("fuelLoadBar", {x=0, y=0}, {w=0, h= 10})
+    fuelLoadBar.color = {r=255, g=0, b = 0, a = 90}
+    fuelLoadBar.update = function()
+      if  machine.fuelTimer and machine.fuelTimer > 0 then
+        fuelLoadBar.dimensions.w = fuelBar.dimensions.w * machine.fuelTimer / machine.fuelTimerBase
+      end
+    end
+    fuelBar:addElement(fuelLoadBar, "fuelLoadBar")
+    mi:addElement(fuelBar, "fuelBar")
+    mi:addElement(newInventoryPanel("output", {x=300, y=50}, machine.inventories.outputs), "output")
   end
 
   mi:init()

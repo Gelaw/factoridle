@@ -80,7 +80,7 @@ fioritures = {
 function Map:init()
   Map.seed = 532100
   Map.chunksize = 32
-  Map.chunknumber = 80
+  Map.chunknumber = 12
   loading = "generating chunks"
 end
 
