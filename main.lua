@@ -11,7 +11,7 @@ grab = {}
 grab.status = nil
 
 --Current gameScreen
-local gameScreen = "game"
+local gameScreen = "menu"
 local cursorPosition = "credits"
 local cursorIsVisible = true
 local timer = 0
@@ -21,9 +21,7 @@ function love.load()
   width = love.graphics.getWidth()
   height = love.graphics.getHeight()
 
-  interface = Interface.new()
-  world = World.new()
-  interface:init()
+  loading = "unloaded"
 end
 
 
@@ -40,6 +38,9 @@ end
         end
       end
       return
+    elseif gameScreen == "loading" then
+      love.graphics.setColor(255, 255, 255)
+      love.graphics.print(loading, width/2 - love.graphics.getFont():getWidth(loading)/2, height - height/8)
     elseif gameScreen == "game" then
       world:draw()
       interface:draw()
@@ -52,6 +53,12 @@ end
   end
 
   function love.update(dt)
+    if gameScreen == "loading" then
+      world:load()
+      if loading == "done" then
+        gameScreen = "game"
+      end
+    end
     if gameScreen == "menu" then
       timer = timer + dt
       if cursorIsVisible and timer > 0.5  then
@@ -94,7 +101,10 @@ end
   function love.mousepressed(x, y, button, isTouch)
     if gameScreen == "menu" then
       if button == 1 and cursorPosition == "play" then
-        gameScreen = "game"
+        gameScreen = "loading"
+        interface = Interface.new()
+        world = World.new()
+        interface:init()
       end
       return
     end

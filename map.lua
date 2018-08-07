@@ -80,11 +80,24 @@ fioritures = {
 function Map:init()
   Map.seed = 532100
   Map.chunksize = 32
-  Map.chunknumber = 12
-  self:generateChunks()
-  self:cleanSmallchunks()
-  self:generateMap()
-  self:generateFioriture()
+  Map.chunknumber = 80
+  loading = "generating chunks"
+end
+
+function Map:load()
+  if loading == "generating chunks" then
+    self:generateChunks()
+    loading = "cleanning small chunks"
+  elseif loading == "cleanning small chunks" then
+    self:cleanSmallchunks()
+    loading = "generating map"
+  elseif loading =="generating map" then
+    self:generateMap()
+    loading = "adding elements"
+  elseif loading =="adding elements" then
+    self:generateFioriture()
+    loading = "done"
+  end
 end
 
 function Map:generateChunks()
@@ -309,5 +322,4 @@ function Map:draw(posCam)
   end
 end
 
-Map:init()
 return Map

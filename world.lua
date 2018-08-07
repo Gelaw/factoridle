@@ -10,6 +10,7 @@ local World = {}
     local world = {}
 
     function world:init()
+      Map:init()
       self.entities = {}
       self.player = Player.new()
       world.posCam = { minx = width/2, miny = height/2, maxx = Map.chunknumber*Map.chunksize*16-width/2, maxy = Map.chunknumber*Map.chunksize*16-height/2}
@@ -26,6 +27,10 @@ local World = {}
       local coppermine = RessourceGenerator:new({x = 10*32, y = 8*32}, 5)
       world:addEntity(coppermine)
       interface:addGroupRG(coppermine)
+    end
+
+    function world:load()
+      Map:load()
     end
 
     function world:addEntity(entity)
