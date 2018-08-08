@@ -74,7 +74,9 @@ fioritures = {
   {name = "tallgrass", orientation = {x=12, y=0}, priority = 10, matches = {"grass"}},
   {name = "hill", orientation = {x=24, y=0}, priority = 5, matches = {"grass"}},
   {name = "hole", orientation = {x=20, y=18}, priority = 5, matches = {"sand", "rock"}},
-  {name = "sandhill", orientation = {x=24, y=6}, priority = 5, matches = {"sand"}}
+  {name = "sandhill", orientation = {x=24, y=6}, priority = 5, matches = {"sand"}},
+  {name = "rockhill", orientation = {x=24, y=12}, priority = 5, matches = {"sand", "rock"}},
+  {name = "mountain", orientation = {x=24, y=18}, priority = 5, matches = {"sand", "rock", "grass"}}
 }
 
 function Map:init()

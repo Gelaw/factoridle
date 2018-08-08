@@ -20,7 +20,6 @@ function Player.new()
     if self.isCrafting == true then
       self.timer = self.timer - dt
       if self.timer <= 0 then
-        print("?")
         self.isCrafting = false
         self.timer = nil
         for i, extrant in pairs(self.extrants) do

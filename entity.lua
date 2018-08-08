@@ -193,7 +193,6 @@ local Entity = {}
           self:turnAnimOff()
           self.timer = nil
           for i, extrant in pairs(self.extrants) do
-            print(extrant.itemID, extrant.quantity)
             machine.inventories.outputs:add(Item.new(extrant.itemID, extrant.quantity))
           end
           self.extrants = nil
