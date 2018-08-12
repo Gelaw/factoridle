@@ -10,27 +10,33 @@ local World = {}
     local world = {}
 
     function world:init()
-      Map:init()
       self.entities = {}
+      Map:init(self.addRG)
       self.player = Player.new()
-      world.posCam = { minx = width/2, miny = height/2, maxx = Map.chunknumber*Map.chunksize*16-width/2, maxy = Map.chunknumber*Map.chunksize*16-height/2}
-      world.posCam.x, world.posCam.y = world.posCam.minx, world.posCam.miny
-      local forest = RessourceGenerator:new({x = 20*32, y = 32}, 2)
-      world:addEntity(forest)
-      interface:addGroupRG(forest)
-      local quarry = RessourceGenerator:new({x = 5*32, y = 15*32}, 3)
-      world:addEntity(quarry)
-      interface:addGroupRG(quarry)
-      local ironmine = RessourceGenerator:new({x = 6*32, y = 7*32}, 4)
-      world:addEntity(ironmine)
-      interface:addGroupRG(ironmine)
-      local coppermine = RessourceGenerator:new({x = 10*32, y = 8*32}, 5)
-      world:addEntity(coppermine)
-      interface:addGroupRG(coppermine)
+      self.posCam = { minx = width/2, miny = height/2, maxx = Map.chunknumber*Map.chunksize*16-width/2, maxy = Map.chunknumber*Map.chunksize*16-height/2}
+      self.posCam.x, world.posCam.y = world.posCam.minx, world.posCam.miny
+      -- local forest = RessourceGenerator:new({x = 20*32, y = 32}, 2)
+      -- world:addEntity(forest)
+      -- interface:addGroupRG(forest)
+      -- local quarry = RessourceGenerator:new({x = 5*32, y = 15*32}, 3)
+      -- world:addEntity(quarry)
+      -- interface:addGroupRG(quarry)
+      -- local ironmine = RessourceGenerator:new({x = 6*32, y = 7*32}, 4)
+      -- world:addEntity(ironmine)
+      -- interface:addGroupRG(ironmine)
+      -- local coppermine = RessourceGenerator:new({x = 10*32, y = 8*32}, 5)
+      -- world:addEntity(coppermine)
+      -- interface:addGroupRG(coppermine)
     end
 
     function world:load()
       Map:load()
+    end
+
+    function world:addRG(x, y, item)
+      local rg = RessourceGenerator:new({x = x, y = y}, item)
+      world:addEntity(rg)
+      interface:addGroupRG(rg)
     end
 
     function world:addEntity(entity)

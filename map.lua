@@ -79,10 +79,11 @@ fioritures = {
   {name = "mountain", orientation = {x=24, y=18}, priority = 5, matches = {"sand", "rock", "grass"}}
 }
 
-function Map:init()
+function Map:init(addRG)
   Map.seed = 532100
   Map.chunksize = 32
   Map.chunknumber = 12
+  self.addRG = addRG
   loading = "generating chunks"
 end
 
@@ -231,6 +232,13 @@ function Map:generateFioriture()
       if m == middleType then ok = true end
     end
     if ok then
+      if fioriture.name == "tree" or fioriture.name == "pine" then
+        self:addRG(16*x, 16*y, 2)
+      elseif fioriture.name == "rockhill" then
+        self:addRG(16*x, 16*y, 3)
+      elseif fioriture.name == "hill" or fioriture.name == "mountain" then
+        self:addRG(16*x, 16*y, (math.random()<0.5 and 4 or 5))
+      end
       n = n + 1
       for j = y - ysize + 1 , y + ysize do
         for i = x - xsize + 1, x + xsize do

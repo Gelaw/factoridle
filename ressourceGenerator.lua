@@ -4,9 +4,17 @@ local Item = require "item"
 
 local RessourceGenerator = {}
 
+  local id = 0
+
+  function RessourceGenerator:newID()
+    id = id + 1
+    return id
+  end
+
   function RessourceGenerator:new(pos, dataID)
     local ressourceGenerator = Entity:new(pos, {width = RessourceGenerator.data[dataID]["width"], height = RessourceGenerator.data[dataID]["height"]})
     ressourceGenerator.movable = false
+    ressourceGenerator.id = RessourceGenerator:newID()
     ressourceGenerator.image = Item.image[RessourceGenerator.data[dataID]["generatedID"]]["image"]
     ressourceGenerator.inventories.toolSlot = Inventory.new({width = 1, height = 1})
     ressourceGenerator.inventories.inventory = Inventory.new({width = 5, height = 4})
@@ -39,7 +47,7 @@ local RessourceGenerator = {}
     end
 
     function ressourceGenerator:getName()
-      return RessourceGenerator.data[dataID]["name"]
+      return RessourceGenerator.data[dataID]["name"]..self.id
     end
 
     function ressourceGenerator:canGenerate()
